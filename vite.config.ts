@@ -3,7 +3,6 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 
-
 function figmaAssetResolver() {
   return {
     name: 'figma-asset-resolver',
@@ -33,4 +32,23 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
+
+  build: {
+    // ⬇️ Évite "EMFILE: too many open files" causé par lucide-react (1500+ fichiers d'icônes)
+    rollupOptions: {
+      maxParallelFileOps: 10,
+      output: {
+        // ⬇️ Découpe le bundle de 1 Mo en chunks plus petits
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router'],
+          'supabase': ['@supabase/supabase-js'],
+          'ui-icons': ['lucide-react'],
+          'charts': ['recharts'],
+          'motion': ['motion'],
+        },
+      },
+    },
+    // ⬇️ Augmente la limite d'avertissement (le bundle était à 1 Mo)
+    chunkSizeWarningLimit: 1500,
+  },
 })
