@@ -854,6 +854,57 @@ async function handleGetTransactions(userId: string, req: Request) {
   const start = (page - 1) * limit;
   return Response.json({ transactions: filtered.slice(start, start + limit), page, limit, total, totalPages, hasMore: page < totalPages }, { headers: corsHeaders });
 }
+
+async function handleAdminGetUserActivity(userId: string) {
+  const txs = (await kv.get(`transactions:${userId}`)) || [];
+  const now = Date.now();
+  const dayAgo = now - 24 * 60 * 60 * 1000;
+  const hourAgo = now - 60 * 60 * 1000;
+
+  const recent24h = txs.filter((t: any) => new Date(t.createdAt || 0).getTime() > dayAgo);
+  const recent1h = txs.filter((t: any) => new Date(t.createdAt || 0).getTime() > hourAgo);
+
+  const sent24h = recent24h.filter((t: any) => t.type === "transfer_sent");
+  const received24h = recent24h.filter((t: any) => t.type === "transfer_received");
+  const deposits24h = recent24h.filter((t: any) => t.type === "deposit");
+  const withdrawals24h = recent24h.filter((t: any) => t.type === "withdrawal");
+  const failed24h = recent24h.filter((t: any) => t.status === "failed" || t.status === "cancelled");
+
+  const uniqueRecipients = new Set(sent24h.map((t: any) => t.recipient).filter(Boolean)).size;
+  const totalSent = sent24h.reduce((s: number, t: any) => s + (t.amount || 0), 0);
+  const totalReceived = received24h.reduce((s: number, t: any) => s + (t.amount || 0), 0);
+
+  const THRESHOLDS = {
+    countSent: 20,
+    totalSent: 500_000,
+    uniqueRecipients: 5,
+    failed1h: 3,
+  };
+
+  const alerts: string[] = [];
+  if (sent24h.length > THRESHOLDS.countSent) alerts.push(`> ${THRESHOLDS.countSent} transferts en 24h (${sent24h.length})`);
+  if (totalSent > THRESHOLDS.totalSent) alerts.push(`> ${THRESHOLDS.totalSent.toLocaleString("fr-FR")} FCFA envoyés en 24h (${totalSent.toLocaleString("fr-FR")})`);
+  if (uniqueRecipients > THRESHOLDS.uniqueRecipients) alerts.push(`> ${THRESHOLDS.uniqueRecipients} destinataires distincts en 24h (${uniqueRecipients})`);
+  if (recent1h.filter((t: any) => t.status === "failed").length > THRESHOLDS.failed1h) alerts.push(`> ${THRESHOLDS.failed1h} échecs en 1h`);
+
+  return Response.json({
+    activity: {
+      sent24h: sent24h.length,
+      sentAmount24h: totalSent,
+      received24h: received24h.length,
+      receivedAmount24h: totalReceived,
+      deposits24h: deposits24h.length,
+      withdrawals24h: withdrawals24h.length,
+      failed24h: failed24h.length,
+      uniqueRecipients24h: uniqueRecipients,
+      totalTx24h: recent24h.length,
+    },
+    thresholds: THRESHOLDS,
+    suspicious: alerts.length > 0,
+    alerts,
+  }, { headers: corsHeaders });
+}
+
 // ═══════════════════════════════════════════════
 // HANDLERS — DÉPÔTS (flux en 2 étapes)
 // ═══════════════════════════════════════════════
@@ -1542,7 +1593,15 @@ async function handleAdminListUsers(supabase: any) {
         };
         await kv.set(`wallet:${u.id}`, wallet);
       }
-
+            // Calcul rapide de suspicious
+      const txs = (await kv.get(`transactions:${u.id}`)) || [];
+      const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+      const recent = txs.filter((t: any) => new Date(t.createdAt || 0).getTime() > dayAgo);
+      const sent24h = recent.filter((t: any) => t.type === "transfer_sent");
+      const suspicious =
+        sent24h.length > 20 ||
+        sent24h.reduce((s: number, t: any) => s + (t.amount || 0), 0) > 500_000 ||
+        new Set(sent24h.map((t: any) => t.recipient).filter(Boolean)).size > 5;
       return {
         id: u.id,
         email: u.email || "",
@@ -1559,6 +1618,7 @@ async function handleAdminListUsers(supabase: any) {
         totalWithdrawals: wallet.totalWithdrawals || 0,
         countSent: wallet.countSent || 0,
         countReceived: wallet.countReceived || 0,
+        suspicious,
       };
     })
   );
@@ -2295,7 +2355,10 @@ export default {
         const supabaseAdmin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
         if (method === "GET" && path.endsWith("/admin/users")) return await handleAdminListUsers(supabaseAdmin);
-
+        if (method === "GET" && path.includes("/admin/users/") && path.endsWith("/activity")) {
+          const userId = path.split("/admin/users/")[1].replace("/activity", "");
+          return await handleAdminGetUserActivity(userId);
+        }
         if (method === "POST" && path.includes("/admin/users/") && path.endsWith("/suspend")) {
           const userId = path.split("/admin/users/")[1].replace("/suspend", "");
           const body = await req.json().catch(() => ({}));

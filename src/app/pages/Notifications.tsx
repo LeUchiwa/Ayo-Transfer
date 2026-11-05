@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useNavigate } from "react-router";
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import {
   Bell, CheckCheck, AlertCircle, ArrowUpRight, ArrowDownLeft,
-  Loader2, Inbox, ShieldCheck, ShieldX, Clock,
+  Inbox, ShieldCheck, ShieldX, Clock, RefreshCw, Send, Plus,
 } from "lucide-react";
+import { toast } from "sonner";
 import { walletApi } from "../../../utils/api";
 import { useAuth } from "../contexts/AuthContext";
 import { notifyNotificationsChanged } from "../hooks/useUnreadNotificationsCount";
@@ -24,6 +26,7 @@ type ApiNotification = {
 };
 
 const STORAGE_KEY = (userId: string) => `ayo_notif_read_${userId}`;
+const POLL_INTERVAL_MS = 30_000; // 30 secondes
 
 function getReadIds(userId: string): Set<string> {
   try {
@@ -72,35 +75,84 @@ function timeAgo(iso: string): string {
 }
 
 export function Notifications() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const userId = user?.id || "";
 
   const [notifications, setNotifications] = useState<ApiNotification[]>([]);
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Charge les notifications depuis l'API
+  // ═══ C — Chargement initial + polling 30s ═══
+  const loadNotifications = useCallback(async (silent = false) => {
+    if (!userId) return;
+    if (!silent) setLoading(true);
+    else setRefreshing(true);
+
+    setError(null);
+    try {
+      const res = await walletApi.getNotifications();
+      const list = res.notifications || [];
+
+      // Détecte les nouvelles notifs (pour toast)
+      if (silent && notifications.length > 0) {
+        const oldIds = new Set(notifications.map((n) => n.id));
+        const newOnes = list.filter((n: ApiNotification) => !oldIds.has(n.id));
+        if (newOnes.length > 0) {
+          toast.info(
+            `${newOnes.length} nouvelle${newOnes.length > 1 ? "s" : ""} notification${newOnes.length > 1 ? "s" : ""}`,
+            { description: newOnes[0].title }
+          );
+          notifyNotificationsChanged();
+        }
+      }
+
+      setNotifications(list);
+      setReadIds(getReadIds(userId));
+      setLastUpdated(new Date());
+    } catch (e: any) {
+      if (!silent) setError(e?.message || "Impossible de charger les notifications.");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [userId, notifications]);
+
+  // Chargement initial
   useEffect(() => {
     if (!userId) return;
-    let cancelled = false;
-    (async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await walletApi.getNotifications();
-        if (!cancelled) {
-          setNotifications(res.notifications || []);
-          setReadIds(getReadIds(userId));
-        }
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message || "Impossible de charger les notifications.");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
+    loadNotifications(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
+
+  // Polling 30s — pausé quand l'onglet est caché
+  useEffect(() => {
+    if (!userId) return;
+
+    const interval = setInterval(() => {
+      // Ne poll pas si l'onglet n'est pas actif
+      if (document.visibilityState === "visible") {
+        loadNotifications(true);
+      }
+    }, POLL_INTERVAL_MS);
+
+    // Recharge immédiatement quand on revient sur l'onglet
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible" && lastUpdated) {
+        const age = Date.now() - lastUpdated.getTime();
+        if (age > 60_000) loadNotifications(true);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [userId, loadNotifications, lastUpdated]);
 
   const unreadCount = notifications.filter((n) => !readIds.has(n.id)).length;
 
@@ -109,7 +161,7 @@ export function Notifications() {
     next.add(id);
     setReadIds(next);
     saveReadIds(userId, next);
-    notifyNotificationsChanged(); 
+    notifyNotificationsChanged();
   };
 
   const markAllAsRead = () => {
@@ -118,6 +170,7 @@ export function Notifications() {
     setReadIds(next);
     saveReadIds(userId, next);
     notifyNotificationsChanged();
+    toast.success("Toutes les notifications sont lues");
   };
 
   const NotificationItem = ({ n }: { n: ApiNotification }) => {
@@ -151,15 +204,31 @@ export function Notifications() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-2xl font-semibold text-gray-900">Notifications</h2>
           <p className="text-gray-600 mt-1">Gérez vos notifications et messages</p>
+          {lastUpdated && (
+            <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              Mis à jour {timeAgo(lastUpdated.toISOString())}
+            </p>
+          )}
         </div>
-        <Badge variant="secondary" className="bg-orange-100 text-orange-700">
-          <Bell className="w-3 h-3 mr-1" />
-          {unreadCount} non lue{unreadCount > 1 ? "s" : ""}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+            <Bell className="w-3 h-3 mr-1" />
+            {unreadCount} non lue{unreadCount > 1 ? "s" : ""}
+          </Badge>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => loadNotifications(true)}
+            disabled={refreshing || loading}
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+          </Button>
+        </div>
       </div>
 
       <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-orange-100">
@@ -192,14 +261,45 @@ export function Notifications() {
                 <div className="flex items-center gap-2 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
                   <AlertCircle className="w-5 h-5 shrink-0" />
                   {error}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => loadNotifications(false)}
+                    className="ml-auto"
+                  >
+                    Réessayer
+                  </Button>
                 </div>
               )}
 
+              {/* ═══ D — État vide soigné ═══ */}
               {!loading && !error && notifications.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                  <Inbox className="w-10 h-10 mb-2 opacity-40" />
-                  <p className="text-sm">Aucune notification pour le moment.</p>
-                  <p className="text-xs mt-1">Vos dépôts, retraits et transferts apparaîtront ici.</p>
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="w-20 h-20 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+                    <Inbox className="w-10 h-10 text-orange-400" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    Aucune notification
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-6 max-w-sm">
+                    Vos dépôts, retraits, transferts et vérifications d'identité apparaîtront ici.
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => navigate("/transfer")}
+                      className="bg-primary hover:bg-primary/90 text-white"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      Faire un transfert
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => navigate("/wallet")}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Déposer
+                    </Button>
+                  </div>
                 </div>
               )}
 
