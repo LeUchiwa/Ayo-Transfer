@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Link } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -10,7 +11,7 @@ import { Badge } from "../components/ui/badge";
 import {
   Wallet as WalletIcon, Plus, Minus, ArrowUpCircle, ArrowDownCircle,
   Copy, Clock, ShieldCheck, AlertCircle, Loader2, Phone, CreditCard,
-  Banknote, CheckCircle2, Globe, ArrowRight, XCircle,
+  Banknote, CheckCircle2, Globe, ArrowRight, XCircle, Inbox,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
@@ -483,7 +484,7 @@ function FailurePage({ type, method, amount, ref_, reason, onReset }: any) {
 type WalletStep = "form" | "waiting_coords" | "coords_ready" | "pending_validation" | "transit" | "success" | "failed";
 
 export function Wallet() {
-  const { stats, addDeposit, addWithdrawal, checkBalance, refreshWallet, getTransactionStatus } = useWallet();
+  const { stats, transactions, isLoading, addDeposit, addWithdrawal, checkBalance, refreshWallet, getTransactionStatus } = useWallet();
   const balance = stats.balance;
 
   // Deposit state
@@ -806,6 +807,31 @@ const handleResumeWithdrawal = () => {
   const withdrawFee = withdrawMethod ? Math.ceil(Number(withdrawForm.amount) * withdrawMethod.fee) : 0;
   const depositNewBalance = balance + Number(depositForm.amount);
   const withdrawNewBalance = balance - Number(withdrawForm.amount) - withdrawFee;
+
+  // ── Opérations récentes (dépôts + retraits) ────────────────────────────────
+  const recentOps = transactions
+    .filter((t) => t.type === "deposit" || t.type === "withdrawal")
+    .slice(0, 5)
+    .map((t) => {
+      const isDeposit = t.type === "deposit";
+      const statusLabel =
+        t.status === "completed" ? "Complété" :
+        t.status === "failed" ? "Échoué" :
+        "En attente";
+      return {
+        id: t.id,
+        label: `${isDeposit ? "Dépôt" : "Retrait"} ${t.method || ""}`.trim(),
+        date: new Date(t.createdAt).toLocaleString("fr-FR", {
+          day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+        }),
+        amount: `${isDeposit ? "+" : "-"}${t.amount.toLocaleString()} FCFA`,
+        iconBg: isDeposit ? "bg-green-500" : "bg-blue-500",
+        Icon: isDeposit ? ArrowUpCircle : ArrowDownCircle,
+        color: isDeposit ? "text-green-600" : "text-blue-600",
+        status: t.status,
+        statusLabel,
+      };
+    });
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
@@ -1309,30 +1335,79 @@ const handleResumeWithdrawal = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
         <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-teal-100">
           <CardHeader>
-            <CardTitle>Opérations récentes</CardTitle>
-            <CardDescription>Vos derniers dépôts et retraits</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Opérations récentes</CardTitle>
+                <CardDescription>Vos derniers dépôts et retraits</CardDescription>
+              </div>
+              {recentOps.length > 0 && (
+                <Link to="/history">
+                  <Button variant="ghost" size="sm" className="text-teal-600 hover:text-teal-700">
+                    Voir tout <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {[
-                { label: "Dépôt MTN MoMo", date: "2026-03-15", amount: "+50 000 FCFA", bg: "bg-green-50", iconBg: "bg-green-500", Icon: ArrowUpCircle, color: "text-green-600" },
-                { label: "Retrait Orange Money", date: "2026-03-12", amount: "-30 000 FCFA", bg: "bg-blue-50", iconBg: "bg-blue-500", Icon: ArrowDownCircle, color: "text-blue-600" },
-                { label: "Dépôt Wave", date: "2026-03-10", amount: "+100 000 FCFA", bg: "bg-green-50", iconBg: "bg-sky-500", Icon: ArrowUpCircle, color: "text-green-600" },
-              ].map((op) => (
-                <div key={op.label + op.date} className={`flex items-center justify-between p-3 ${op.bg} rounded-lg`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 ${op.iconBg} rounded-full flex items-center justify-center`}>
-                      <op.Icon className="w-5 h-5 text-white" />
+            {isLoading ? (
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 animate-pulse">
+                    <div className="w-10 h-10 rounded-full bg-gray-200" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-40 bg-gray-200 rounded" />
+                      <div className="h-3 w-24 bg-gray-200 rounded" />
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{op.label}</p>
-                      <p className="text-sm text-gray-500">{op.date}</p>
+                    <div className="h-4 w-20 bg-gray-200 rounded" />
+                  </div>
+                ))}
+              </div>
+            ) : recentOps.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <div className="w-16 h-16 rounded-full bg-teal-50 flex items-center justify-center mb-3">
+                  <Inbox className="w-8 h-8 text-teal-400" />
+                </div>
+                <p className="text-sm font-medium text-gray-700 mb-1">Aucune opération récente</p>
+                <p className="text-xs text-gray-500 mb-4">Vos dépôts et retraits apparaîtront ici</p>
+                <Link to="/history">
+                  <Button size="sm" variant="outline">
+                    Voir l'historique complet
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {recentOps.map((op) => (
+                  <div key={op.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className={`w-10 h-10 ${op.iconBg} rounded-full flex items-center justify-center flex-shrink-0`}>
+                        <op.Icon className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-900 truncate">{op.label}</p>
+                        <p className="text-xs text-gray-500">{op.date}</p>
+                      </div>
+                    </div>
+                    <div className="text-right ml-3 flex-shrink-0">
+                      <p className={`font-semibold ${op.color}`}>{op.amount}</p>
+                      <Badge
+                        variant="secondary"
+                        className={
+                          op.status === "completed"
+                            ? "bg-green-50 text-green-700 text-[10px]"
+                            : op.status === "failed"
+                            ? "bg-red-50 text-red-700 text-[10px]"
+                            : "bg-amber-50 text-amber-700 text-[10px]"
+                        }
+                      >
+                        {op.statusLabel}
+                      </Badge>
                     </div>
                   </div>
-                  <p className={`font-semibold ${op.color}`}>{op.amount}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>
