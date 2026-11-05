@@ -4,6 +4,7 @@ import { Toaster } from "./components/ui/sonner";
 import { AuthProvider } from "./contexts/AuthContext";
 import { WalletProvider } from "./contexts/WalletContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { PWAInstallBanner } from "./components/PWAInstallBanner";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <WalletProvider>
           <RouterProvider router={router} />
           <Toaster />
+          <PWAInstallBanner />
         </WalletProvider>
       </AuthProvider>
     </ErrorBoundary>
