@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useWallet } from "../contexts/WalletContext";
 import { useAuth } from "../contexts/AuthContext";
 import { WelcomeRotator } from "../components/WelcomeRotator";
+import { ActivityChart, BreakdownChart } from "../components/DashboardCharts";
 
 export function Dashboard() {
   const { stats, transactions, isLoading } = useWallet();
@@ -243,6 +244,36 @@ export function Dashboard() {
           </CardContent>
         </Card>
       </motion.div>
+
+            {/* ─── Graphiques d'activité ─── */}
+      {transactions.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+        >
+          <Card className="bg-white shadow-sm border-border/50">
+            <CardHeader>
+              <CardTitle className="text-lg">Activité</CardTitle>
+              <CardDescription>Entrées et sorties sur la période</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ActivityChart transactions={transactions} />
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white shadow-sm border-border/50">
+            <CardHeader>
+              <CardTitle className="text-lg">Répartition</CardTitle>
+              <CardDescription>Par type d'opération</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <BreakdownChart transactions={transactions} />
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* ─── Transactions récentes ─── */}
       <motion.div
