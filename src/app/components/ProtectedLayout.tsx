@@ -29,6 +29,7 @@ import { Badge } from "./ui/badge";
 import ayoLogo from "@/imports/AYO.png";
 import { useUnreadNotificationsCount } from "../hooks/useUnreadNotificationsCount";
 import { usePendingTransactionsCount } from "../hooks/usePendingTransactionsCount";
+import { PWAInstallMenuItem } from "./PWAInstallMenuItem";
 
 export function ProtectedLayout() {
   const location = useLocation();
@@ -127,6 +128,9 @@ export function ProtectedLayout() {
                       <User className="w-4 h-4 mr-2" />
                       Mon profil
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <PWAInstallMenuItem />
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={handleLogout}
@@ -162,6 +166,9 @@ export function ProtectedLayout() {
                     <DropdownMenuItem onClick={() => navigate('/profile')}>
                       <User className="w-4 h-4 mr-2" />
                       Mon profil
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <PWAInstallMenuItem />
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
