@@ -18,6 +18,7 @@ import { exportToCSV } from "../../../utils/csvExport";
 import { projectId } from "../../../utils/supabase/info";
 import ayoLogo from "@/imports/AYO.png";
 import { Button } from "../components/ui/button";
+import { AdminNewsTab } from "../components/AdminNewsTab";
 
 // ─── Config API ───────────────────────────────────────────────────────────────
 
@@ -639,7 +640,7 @@ function PasswordRotationModal({
 
 // ─── Main Admin Panel ─────────────────────────────────────────────────────────
 
-type Tab = "overview" | "pending" | "kyc" | "users" | "transactions" | "services" | "settings";
+type Tab = "overview" | "pending" | "kyc" | "users" | "transactions" | "services" | "settings" | "news";
 
 export function Admin() {
   const navigate = useNavigate();
@@ -1273,7 +1274,9 @@ export function Admin() {
     { id: "users",        label: "Utilisateurs",   icon: Users, badge: users.length },
     { id: "transactions", label: "Transactions",   icon: Activity },
     { id: "services",     label: "Services",       icon: Globe, badge: services.length },
+    { id: "news",         label: "Actualités",     icon: FileText },
     { id: "settings",     label: "Paramètres",     icon: Settings },
+    
   ];
 
   return (
@@ -2354,6 +2357,11 @@ export function Admin() {
                   )}
                 </button>
               </div>
+            </motion.div>
+          )}
+                      {activeTab === "news" && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <AdminNewsTab />
             </motion.div>
           )}
           </motion.div>
