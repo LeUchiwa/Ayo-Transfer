@@ -92,6 +92,7 @@ interface AdminUser {
   totalWithdrawals: number;
   countSent: number;
   countReceived: number;
+  suspicious?: boolean;
 }
 
 interface AdminService {
@@ -321,6 +322,11 @@ function UserDetailModal({ user, onClose }: { user: AdminUser; onClose: () => vo
             <div>
               <h3 className="text-lg font-bold text-foreground">{user.name}</h3>
               <p className="text-xs text-gray-500">{user.email}</p>
+              {user.suspicious && (
+                <span className="inline-flex items-center gap-1 ml-2 px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-700 font-medium">
+                  ⚠️ Suspect
+                </span>
+              )}
             </div>
           </div>
           <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400">
@@ -692,8 +698,8 @@ export function Admin() {
       icon: string;
       color: string;
       type: string;
-      depositFee: number;  // en %
-      withdrawFee: number; // en %
+      depositFee: number;
+      withdrawFee: number;
       active: boolean;
     };
   }>({
@@ -705,6 +711,16 @@ export function Admin() {
       depositFee: 0, withdrawFee: 0, active: true,
     },
   });
+
+  const [suspendModal, setSuspendModal] = useState<{
+    open: boolean;
+    user: AdminUser | null;
+    reason: string;
+    activity: any | null;
+    loadingActivity: boolean;
+  }>({ open: false, user: null, reason: "", activity: null, loadingActivity: false });
+
+
   const [serviceSaving, setServiceSaving] = useState(false);
   const [deleteServiceModal, setDeleteServiceModal] = useState<{ open: boolean; service: AdminService | null }>({
     open: false, service: null,
@@ -1084,19 +1100,29 @@ export function Admin() {
     }
   };
 
-  const handleSuspendUser = async (user: AdminUser) => {
-    const reason = prompt(`Suspendre ${user.name} (${user.email}) ?\n\nRaison (optionnel) :`);
-    if (reason === null) return;
+    const openSuspendModal = async (user: AdminUser) => {
+    setSuspendModal({ open: true, user, reason: "", activity: null, loadingActivity: true });
+    try {
+      const res = await adminCall(`/admin/users/${user.id}/activity`);
+      setSuspendModal(prev => ({ ...prev, activity: res, loadingActivity: false }));
+    } catch {
+      setSuspendModal(prev => ({ ...prev, loadingActivity: false }));
+    }
+  };
 
+  const confirmSuspend = async () => {
+    const { user, reason } = suspendModal;
+    if (!user) return;
     try {
       await adminCall(`/admin/users/${user.id}/suspend`, {
         method: "POST",
-        body: { reason: reason || "Non spécifiée" },
+        body: { reason: reason.trim() || "Non spécifiée" },
       });
       toast.success(`${user.name} suspendu`);
-      await loadUsers();
-    } catch (err) {
-      toast.error("Erreur : " + (err instanceof Error ? err.message : "Inconnue"));
+      setSuspendModal({ open: false, user: null, reason: "", activity: null, loadingActivity: false });
+      loadUsers();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
     }
   };
 
@@ -1874,7 +1900,7 @@ export function Admin() {
                                     </button>
                                   ) : (
                                     <button
-                                      onClick={() => handleSuspendUser(user)}
+                                      onClick={() => openSuspendModal(user)}
                                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                       title="Suspendre"
                                     >
@@ -2628,6 +2654,73 @@ export function Admin() {
               >
                 {processingId === rejectModal.deposit.id && <Loader2 className="w-4 h-4 animate-spin" />}
                 Confirmer le rejet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de suspension */}
+      {suspendModal.open && suspendModal.user && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+          onClick={() => setSuspendModal(s => ({ ...s, open: false }))}
+        >
+          <div className="bg-white rounded-xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+                <Ban className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">Suspendre l'utilisateur</h3>
+                <p className="text-sm text-muted-foreground">
+                  {suspendModal.user.name} · {suspendModal.user.email}
+                </p>
+              </div>
+            </div>
+
+            {suspendModal.loadingActivity ? (
+              <div className="text-center py-4 text-muted-foreground">Chargement de l'activité…</div>
+            ) : suspendModal.activity && (
+              <div className="bg-muted/50 rounded-lg p-3 mb-4 text-sm space-y-1">
+                <p className="font-medium mb-2">Activité des dernières 24h</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>Transferts envoyés : <strong>{suspendModal.activity.activity?.sent24h ?? 0}</strong></div>
+                  <div>Montant envoyé : <strong>{(suspendModal.activity.activity?.sentAmount24h ?? 0).toLocaleString()} FCFA</strong></div>
+                  <div>Destinataires uniques : <strong>{suspendModal.activity.activity?.uniqueRecipients24h ?? 0}</strong></div>
+                  <div>Échecs : <strong>{suspendModal.activity.activity?.failed24h ?? 0}</strong></div>
+                </div>
+                {suspendModal.activity.suspicious && (suspendModal.activity.alerts?.length ?? 0) > 0 && (
+                  <div className="mt-2 pt-2 border-t border-red-200">
+                    <p className="text-red-700 font-medium text-xs">⚠️ Activité suspecte détectée :</p>
+                    <ul className="list-disc list-inside text-xs text-red-600 mt-1">
+                      {suspendModal.activity.alerts.map((a: string, i: number) => <li key={i}>{a}</li>)}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <label className="block text-sm font-medium mb-2">Raison de la suspension</label>
+            <textarea
+              className="w-full border rounded-lg p-3 min-h-20 text-sm"
+              placeholder="Ex : Série de transferts inhabituels"
+              value={suspendModal.reason}
+              onChange={(e) => setSuspendModal(s => ({ ...s, reason: e.target.value }))}
+            />
+
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => setSuspendModal(s => ({ ...s, open: false }))}
+                className="flex-1 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmSuspend}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700"
+              >
+                Suspendre
               </button>
             </div>
           </div>

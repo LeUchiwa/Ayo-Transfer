@@ -71,7 +71,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         password,
       });
-      if (error) throw error;
+      if (error) {
+        const msg = (error.message || "").toLowerCase();
+        const code = (error as any).code || "";
+        const status = (error as any).status;
+        if (
+          msg.includes("banned") ||
+          msg.includes("suspend") ||
+          code === "user_banned" ||
+          status === 403
+        ) {
+          throw new Error("BANNED");
+        }
+        throw error;
+      }
     } finally {
       setIsLoading(false);
     }

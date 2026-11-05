@@ -17,7 +17,7 @@ import { AdminGate } from "./components/AdminGate";
 import { Terms } from "./pages/Terms";
 import { Privacy } from "./pages/Privacy";
 import { Profile } from "./pages/Profile";
-
+import { NotFound } from "./pages/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -67,5 +67,9 @@ export const router = createBrowserRouter([
       { path: "notifications", Component: Notifications },
       { path: "news", Component: News },
     ],
+  },
+    {
+    path: "*",
+    Component: NotFound,
   },
 ]);

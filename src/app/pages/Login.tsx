@@ -6,7 +6,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { toast } from 'sonner';
-import { Loader2, Mail, Lock, Eye, EyeOff, ShieldCheck, Zap, TrendingUp, ArrowRight } from 'lucide-react';
+import { Loader2, Mail, Lock, Eye, EyeOff, ShieldCheck, Zap, TrendingUp, ArrowRight, Ban } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { WelcomeRotator } from '../components/WelcomeRotator';
@@ -19,6 +19,7 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isBanned, setIsBanned] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -38,7 +39,12 @@ export function Login() {
       toast.success('Connexion réussie !');
       navigate('/');
     } catch (error) {
-      toast.error('Erreur de connexion. Vérifiez vos identifiants.');
+      if ((error as Error).message === "BANNED") {
+        setIsBanned(true);
+        toast.error("Compte suspendu");
+      } else {
+        toast.error('Erreur de connexion. Vérifiez vos identifiants.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -140,6 +146,24 @@ export function Login() {
             <ImageWithFallback src={ayoLogo} alt="AYO" className="h-14 w-auto object-contain" />
           </div>
 
+          {isBanned && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-start gap-3">
+              <Ban className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-red-900">Compte temporairement suspendu</p>
+                <p className="text-sm text-red-700 mt-1">
+                  Votre compte a été suspendu par un administrateur. Veuillez contacter le support pour plus d'informations.
+                </p>
+                <a
+                  href="mailto:contact@ayo-transfer.com"
+                  className="inline-block mt-2 text-sm text-red-800 font-medium underline hover:no-underline"
+                >
+                  📧 contact@ayo-transfer.com
+                </a>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-2 mb-8">
             <h2 className="text-3xl font-poppins font-bold text-foreground">
               Connexion
@@ -162,7 +186,7 @@ export function Login() {
                   type="email"
                   placeholder="votre@email.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => { setEmail(e.target.value); setIsBanned(false); }}
                   disabled={isLoading}
                   required
                   className="pl-10 h-11"
@@ -190,7 +214,7 @@ export function Login() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); setIsBanned(false); }}
                   disabled={isLoading}
                   required
                   className="pl-10 pr-10 h-11"

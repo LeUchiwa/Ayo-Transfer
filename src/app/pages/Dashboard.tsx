@@ -11,6 +11,7 @@ import { useWallet } from "../contexts/WalletContext";
 import { useAuth } from "../contexts/AuthContext";
 import { WelcomeRotator } from "../components/WelcomeRotator";
 import { ActivityChart, BreakdownChart } from "../components/DashboardCharts";
+import { Skeleton, TransactionSkeleton } from "../components/Skeleton";
 
 export function Dashboard() {
   const { stats, transactions, isLoading } = useWallet();
@@ -99,9 +100,9 @@ export function Dashboard() {
             </div>
             <CardTitle className="text-4xl sm:text-5xl font-bold mt-2">
               {isLoading ? (
-                <span className="animate-pulse">Chargement...</span>
-              ) : (
-                <>
+  <Skeleton className="h-12 w-48 bg-white/20" />
+) : (
+  <>
                   {showBalance ? stats.balance.toLocaleString() : "•••••••"}
                   <span className="text-lg font-medium text-white/80 ml-2">FCFA</span>
                 </>
@@ -198,7 +199,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">
-              {isLoading ? "..." : `${stats.totalSent.toLocaleString()} FCFA`}
+              {isLoading ? <Skeleton className="h-7 w-32" /> : `${stats.totalSent.toLocaleString()} FCFA`}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {stats.countSent} transaction{stats.countSent > 1 ? "s" : ""}
@@ -297,7 +298,11 @@ export function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            {recentTransactions.length === 0 ? (
+            {isLoading ? (
+  <div className="space-y-2">
+    {[...Array(3)].map((_, i) => <TransactionSkeleton key={i} />)}
+  </div>
+) : recentTransactions.length === 0 ? (
               <div className="text-center py-12">
                 <div className="w-16 h-16 rounded-full bg-muted mx-auto mb-3 flex items-center justify-center">
                   <WalletIcon className="w-8 h-8 text-muted-foreground" />
