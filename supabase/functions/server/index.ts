@@ -838,12 +838,17 @@ async function handleGetTransactions(userId: string, req: Request) {
   const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
   const limit = Math.min(100, Math.max(1, Number(url.searchParams.get("limit")) || 20));
   const type = url.searchParams.get("type");
+  const status = url.searchParams.get("status");
+  const direction = url.searchParams.get("direction");
   const from = url.searchParams.get("from");
   const to = url.searchParams.get("to");
   const q = url.searchParams.get("q")?.toLowerCase().trim();
 
   let filtered: any[] = [...transactions];
   if (type && type !== "all") filtered = filtered.filter((t: any) => t.type === type);
+  if (status && status !== "all") filtered = filtered.filter((t: any) => t.status === status);
+  if (direction === "sent") filtered = filtered.filter((t: any) => t.type === "withdrawal" || t.type === "transfer_sent");
+  if (direction === "received") filtered = filtered.filter((t: any) => t.type === "deposit" || t.type === "transfer_received");
   if (from) filtered = filtered.filter((t: any) => (t.createdAt || "") >= from);
   if (to) filtered = filtered.filter((t: any) => (t.createdAt || "") <= to);
   if (q) filtered = filtered.filter((t: any) => (t.recipient?.toLowerCase() || "").includes(q) || (t.reference?.toLowerCase() || "").includes(q) || (t.method?.toLowerCase() || "").includes(q));

@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { walletApi } from "../../../utils/api";
 import { useAuth } from "../contexts/AuthContext";
 import { notifyNotificationsChanged } from "../hooks/useUnreadNotificationsCount";
+import { useOneSignal } from "../hooks/useOneSignal";
+import { BellOff } from "lucide-react";
 import { SkeletonTransactionList } from "../components/ui/SkeletonCard";
 
 type ApiNotification = {
@@ -85,6 +87,7 @@ export function Notifications() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const { ready: pushReady, permission: pushPermission, requestPermission } = useOneSignal();
 
   // ═══ C — Chargement initial + polling 30s ═══
   const loadNotifications = useCallback(async (silent = false) => {
@@ -215,7 +218,28 @@ export function Notifications() {
             </p>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {pushReady && !pushPermission && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={async () => {
+                const ok = await requestPermission();
+                if (ok) toast.success("Notifications push activées !");
+                else toast.error("Permission refusée");
+              }}
+              className="bg-primary hover:bg-primary/90 text-white gap-2"
+            >
+              <Bell className="w-4 h-4" />
+              Activer les notifications
+            </Button>
+          )}
+          {pushReady && pushPermission && (
+            <Badge variant="secondary" className="bg-green-100 text-green-700">
+              <Bell className="w-3 h-3 mr-1" />
+              Push activées
+            </Badge>
+          )}
           <Badge variant="secondary" className="bg-orange-100 text-orange-700">
             <Bell className="w-3 h-3 mr-1" />
             {unreadCount} non lue{unreadCount > 1 ? "s" : ""}

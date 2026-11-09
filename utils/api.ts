@@ -82,7 +82,27 @@ export const walletApi = {
   getTransactionStatus: (transactionId: string) =>
     apiCall(`/wallet/transaction/${transactionId}/status`),
   getNotifications: () => apiCall('/notifications'),
-  getTransactions: () => apiCall('/transactions'),
+  getTransactions: (params?: {
+    page?: number;
+    limit?: number;
+    type?: string;
+    status?: string;
+    direction?: string;
+    q?: string;
+    from?: string;
+    to?: string;
+  }) => {
+    const search: string[] = [];
+    if (params) {
+      for (const [k, v] of Object.entries(params)) {
+        if (v !== undefined && v !== null && v !== "" && v !== "all") {
+          search.push(`${k}=${encodeURIComponent(String(v))}`);
+        }
+      }
+    }
+    const qs = search.length ? `?${search.join("&")}` : "";
+    return apiCall(`/transactions${qs}`);
+  },
   getDepositStatus: (id: string) => apiCall(`/wallet/deposit/${id}/status`),
   submitDepositInfo: (id: string, data: { txRef: string; screenshotUrl?: string }) =>
     apiCall(`/wallet/deposit/${id}/info`, { method: 'POST', body: data }),
