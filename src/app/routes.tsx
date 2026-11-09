@@ -17,9 +17,14 @@ import { AdminGate } from "./components/AdminGate";
 import { Terms } from "./pages/Terms";
 import { Privacy } from "./pages/Privacy";
 import { Profile } from "./pages/Profile";
+import { Landing } from "./pages/Landing";
 import { NotFound } from "./pages/NotFound";
 
 export const router = createBrowserRouter([
+  {
+    path: "/landing",
+    Component: Landing,
+  },
   {
     path: "/login",
     Component: Login,

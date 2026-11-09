@@ -2,6 +2,41 @@
   <!DOCTYPE html>
   <html lang="en">
     <head>
+    <script>
+      // ═══ Cleanup one-shot : désinscrit tous les anciens SW et vide les caches ═══
+      (async function() {
+        try {
+          if ("serviceWorker" in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            const CLEANUP_KEY = "ayo_sw_cleanup_v3";
+            const needsCleanup = !localStorage.getItem(CLEANUP_KEY);
+
+            if (needsCleanup) {
+              // Désinscrit tous les SW SAUF le nôtre (/sw.js) qu'on va réinstaller
+              for (const reg of regs) {
+                await reg.unregister();
+              }
+              // Vide tous les caches
+              if ("caches" in window) {
+                const names = await caches.keys();
+                await Promise.all(names.map(n => caches.delete(n)));
+              }
+              localStorage.setItem(CLEANUP_KEY, "1");
+              console.log("[Cleanup] Anciens SW désinscrits, caches vidés");
+
+              // Force un reload une seule fois
+              if (!sessionStorage.getItem("ayo_reloaded_after_cleanup")) {
+                sessionStorage.setItem("ayo_reloaded_after_cleanup", "1");
+                window.location.reload();
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("[Cleanup] Failed:", e);
+        }
+      })();
+    </script>
+
       
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
