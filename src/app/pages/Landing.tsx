@@ -92,7 +92,6 @@ export function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link to="/landing" className="flex items-center gap-3">
             <img src={ayoLogo} alt="AYO" className="h-10 w-auto" />
-            <span className="text-xl font-bold text-gray-900">AYO</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
             <a href="#features" className="hover:text-teal-600 transition-colors">Fonctionnalités</a>
