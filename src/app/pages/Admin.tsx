@@ -19,6 +19,7 @@ import { projectId } from "../../../utils/supabase/info";
 import ayoLogo from "@/imports/AYO.png";
 import { Button } from "../components/ui/button";
 import { AdminNewsTab } from "../components/AdminNewsTab";
+import { ServiceLogo } from "../components/ServiceLogo";
 
 // ─── Config API ───────────────────────────────────────────────────────────────
 
@@ -2110,8 +2111,8 @@ export function Admin() {
                           <tr key={service.id} className="hover:bg-gray-50/50">
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-lg">
-                                  {service.icon}
+                                <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-1.5 shrink-0 shadow-sm">
+                                  <ServiceLogo name={service.id} fallbackIcon={service.icon} className="w-full h-full object-contain" />
                                 </div>
                                 <div>
                                   <p className="font-medium text-foreground">{service.name}</p>
@@ -2433,17 +2434,22 @@ export function Admin() {
                 </div>
                 <div>
                   <label className="text-xs font-medium text-gray-700 block mb-1">Icône</label>
-                  <input
-                    type="text"
-                    value={serviceModal.service.icon}
-                    onChange={e => setServiceModal({
-                      ...serviceModal,
-                      service: { ...serviceModal.service, icon: e.target.value },
-                    })}
-                    placeholder="📱"
-                    maxLength={2}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-center text-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={serviceModal.service.icon}
+                      onChange={e => setServiceModal({
+                        ...serviceModal,
+                        service: { ...serviceModal.service, icon: e.target.value },
+                      })}
+                      placeholder="📱"
+                      maxLength={2}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-center text-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 opacity-50 pointer-events-none">
+                       <ServiceLogo name={serviceModal.service.id} fallbackIcon={serviceModal.service.icon} className="w-full h-full object-contain" />
+                    </div>
+                  </div>
                 </div>
               </div>
 

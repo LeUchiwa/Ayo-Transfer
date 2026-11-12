@@ -11,6 +11,7 @@ import {
 import { motion } from "motion/react";
 import ayoLogo from "@/imports/AYO.png";
 import heroBg from "@/imports/hero-bg.jpg";
+import { ServiceLogo } from "../components/ServiceLogo";
 
 const FEATURES = [
   {
@@ -46,13 +47,13 @@ const FEATURES = [
 ];
 
 const PRICING = [
-  { method: "MTN Mobile Money", deposit: "0%", withdraw: "0,5%", icon: "📱" },
-  { method: "Orange Money", deposit: "0%", withdraw: "0,5%", icon: "📱" },
-  { method: "Wave", deposit: "0%", withdraw: "0,3%", icon: "🌊" },
-  { method: "Djamo", deposit: "0%", withdraw: "0,5%", icon: "💜" },
-  { method: "Express Union", deposit: "0%", withdraw: "1,5%", icon: "🏪" },
-  { method: "Carte bancaire", deposit: "1,5%", withdraw: "—", icon: "💳" },
-  { method: "Virement bancaire", deposit: "0%", withdraw: "1%", icon: "🏛️" },
+  { method: "MTN Mobile Money", deposit: "0%", withdraw: "0,5%" },
+  { method: "Orange Money", deposit: "0%", withdraw: "0,5%" },
+  { method: "Wave", deposit: "0%", withdraw: "0,3%" },
+  { method: "Djamo", deposit: "0%", withdraw: "0,5%" },
+  { method: "Express Union", deposit: "0%", withdraw: "1,5%" },
+  { method: "Carte bancaire", deposit: "1,5%", withdraw: "—" },
+  { method: "Virement bancaire", deposit: "0%", withdraw: "1%" },
 ];
 
 const FAQ = [
@@ -282,7 +283,7 @@ export function Landing() {
                     <tr key={row.method} className="hover:bg-teal-50/30 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <span className="text-xl">{row.icon}</span>
+                          <ServiceLogo name={row.method} className="w-8 h-8 object-contain" />
                           <span className="font-medium text-gray-900">{row.method}</span>
                         </div>
                       </td>

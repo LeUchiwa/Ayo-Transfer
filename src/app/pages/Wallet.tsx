@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { useWallet } from "../contexts/WalletContext";
 import { walletApi } from "../../../utils/api";
+import { ServiceLogo } from "../components/ServiceLogo";
 import confetti from "canvas-confetti";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -953,7 +954,9 @@ const handleResumeWithdrawal = () => {
                                     : "border-gray-200 bg-white hover:border-teal-300 hover:scale-[1.02] active:scale-[0.98]"
                                 }`}
                               >
-                                <div className={`w-9 h-9 ${m.color} rounded-lg flex items-center justify-center text-base shrink-0`}>{m.icon}</div>
+                                <div className={`w-9 h-9 ${m.color}/10 rounded-lg flex items-center justify-center shrink-0 p-1.5`}>
+                                  <ServiceLogo name={m.id} fallbackIcon={m.icon} className="w-full h-full object-contain" />
+                                </div>
                                 <div className="min-w-0">
                                   <p className="text-xs font-semibold text-gray-800 truncate">{m.name}</p>
                                   {m.fee > 0 && <p className="text-[10px] text-gray-400">+{(m.fee * 100).toFixed(1)}% frais</p>}
@@ -1235,7 +1238,9 @@ const handleResumeWithdrawal = () => {
                                     : "border-gray-200 bg-white hover:border-blue-300 hover:scale-[1.02] active:scale-[0.98]"
                                 }`}
                               >
-                                <div className={`w-9 h-9 ${m.color} rounded-lg flex items-center justify-center text-base shrink-0`}>{m.icon}</div>
+                                <div className={`w-9 h-9 ${m.color}/10 rounded-lg flex items-center justify-center shrink-0 p-1.5`}>
+                                  <ServiceLogo name={m.id} fallbackIcon={m.icon} className="w-full h-full object-contain" />
+                                </div>
                                 <div className="min-w-0">
                                   <p className="text-xs font-semibold text-gray-800 truncate">{m.name}</p>
                                   <p className="text-[10px] text-gray-400">{(m.fee * 100).toFixed(1)}% frais</p>
