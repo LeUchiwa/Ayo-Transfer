@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import OneSignal from "react-onesignal";
 import { useAuth } from "../contexts/AuthContext";
 
+// Verrou global pour éviter la double initialisation due à React StrictMode
 let onesignalInitialized = false;
 let onesignalInitPromise: Promise<void> | null = null;
 
@@ -12,11 +13,10 @@ function initOneSignalOnce(appId: string): Promise<void> {
     appId,
     allowLocalhostAsSecureOrigin: true,
     notifyButton: { enable: false },
-    serviceWorkerPath: "/push/OneSignalSDKWorker.js",
-    serviceWorkerParam: { scope: "/push/" },
-    // ⬇️ CLÉ : force un nouveau namespace pour contourner l'IndexedDB piégé
-    // (OneSignal utilise ce chemin pour stocker son état)
-  } as any)
+    // ⬇️ Configuration CRUCIALE pour éviter le conflit avec ton PWA
+    serviceWorkerPath: "/push/onesignal/OneSignalSDKWorker.js",
+    serviceWorkerParam: { scope: "/push/onesignal/" },
+  })
     .then(() => {
       onesignalInitialized = true;
     })
@@ -32,32 +32,25 @@ function initOneSignalOnce(appId: string): Promise<void> {
 
 export function useOneSignal() {
   const { user } = useAuth();
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(onesignalInitialized);
   const [error, setError] = useState<string | null>(null);
-  const mountedRef = useRef(true);
 
   useEffect(() => {
-    mountedRef.current = true;
-    const appId = import.meta.env.VITE_ONESIGNAL_APP_ID as string | undefined;
-
+    const appId = import.meta.env.VITE_ONESIGNAL_APP_ID;
     if (!appId) {
       console.warn("[OneSignal] VITE_ONESIGNAL_APP_ID non configuré");
       setError("missing_app_id");
       return;
     }
 
-    initOneSignalOnce(appId)
-      .then(() => {
-        if (mountedRef.current) {
-          setReady(true);
-          setError(null);
-        }
-      })
-      .catch((e) => {
-        if (mountedRef.current) setError(e?.message || "init_failed");
-      });
+    if (onesignalInitialized) {
+      setReady(true);
+      return;
+    }
 
-    return () => { mountedRef.current = false; };
+    initOneSignalOnce(appId)
+      .then(() => { setReady(true); setError(null); })
+      .catch((e) => setError(e?.message || "init_failed"));
   }, []);
 
   useEffect(() => {
@@ -74,5 +67,6 @@ export function useOneSignal() {
   };
 
   const permission = ready ? OneSignal.Notifications.permission : false;
+
   return { ready, permission, requestPermission, error };
 }

@@ -414,6 +414,49 @@ async function recordUsage(userId: string, _field: "sent" | "withdrawn", amount:
   await kv.set(`counters:${userId}`, counters);
 }
 
+async function sendPushToUser(
+  userId: string,
+  payload: { title: string; body: string; url?: string; tag?: string }
+) {
+  const appId = Deno.env.get("ONESIGNAL_APP_ID");
+  const apiKey = Deno.env.get("ONESIGNAL_REST_API_KEY");
+  
+  if (!appId || !apiKey) {
+    console.warn("[PUSH] OneSignal keys missing");
+    return;
+  }
+
+  try {
+    const response = await fetch("https://api.onesignal.com/notifications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Key ${apiKey}`,
+      },
+      body: JSON.stringify({
+        app_id: appId,
+        include_aliases: { external_id: [userId] },
+        target_channel: "push",
+        headings: { en: payload.title, fr: payload.title },
+        contents: { en: payload.body, fr: payload.body },
+        url: payload.url ? `${Deno.env.get("APP_URL") || ""}${payload.url}` : undefined,
+        chrome_web_icon: "https://ayo-transfer.pages.dev/icons/icon-192.png",
+        tag: payload.tag,
+      }),
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      console.error(`[PUSH] OneSignal API Error:`, JSON.stringify(data));
+    } else {
+      console.log(`[PUSH] Sent successfully to ${userId}:`, data.id);
+    }
+  } catch (err) {
+    console.error("[PUSH] Failed to fetch OneSignal API:", err);
+  }
+}
+
 async function handleTransfer(req: Request, userId: string) {
   // [RATE-LIMIT:handleTransfer]
   {
@@ -583,13 +626,14 @@ async function handleTransfer(req: Request, userId: string) {
   // ⬇️ NOUVEAU : Créditer le compte de revenus plateforme
   await creditPlatformRevenue(fee, reference, "transfer_fee");
 
-  // 5. Envoyer les emails (asynchrone)
+  // 5. Envoyer les emails et les pushs (asynchrone)
   (async () => {
-    try {
-      const { data: { user: senderUser } } = await supabase.auth.admin.getUserById(userId);
-      const senderName = senderUser?.user_metadata?.name || senderUser?.email || "Un utilisateur AYO";
-      const recipientName = recipientUser.user_metadata?.name || recipientUser.email || "Utilisateur";
+    const { data: { user: senderUser } } = await supabase.auth.admin.getUserById(userId);
+    const senderName = senderUser?.user_metadata?.name || senderUser?.email || "Un utilisateur AYO";
+    const recipientName = recipientUser.user_metadata?.name || recipientUser.email || "Utilisateur";
 
+    // 5a. Envoi des emails (isolé pour ne pas bloquer les pushs)
+    try {
       if (senderUser?.email) {
         await sendTransferSentEmail(senderUser.email, senderName, Number(amount), recipientName, reference, senderWallet.balance);
       }
@@ -598,6 +642,18 @@ async function handleTransfer(req: Request, userId: string) {
       }
     } catch (err) {
       console.error("[EMAIL] Failed to send transfer emails:", err);
+    }
+
+    // 5b. Envoi du Push au destinataire (isolé pour être TOUJOURS exécuté)
+    try {
+      await sendPushToUser(recipientUser.id, {
+        title: "Vous avez reçu de l'argent !",
+        body: `+${Number(amount).toLocaleString()} FCFA de ${senderName}`,
+        url: "/history",
+        tag: `received-${reference}`,
+      });
+    } catch (pushErr) {
+      console.error("[PUSH] Failed to send push:", pushErr);
     }
   })();
 
