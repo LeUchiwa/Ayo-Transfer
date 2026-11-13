@@ -10,6 +10,8 @@ import { useState } from "react";
 import { useWallet } from "../contexts/WalletContext";
 import { useAuth } from "../contexts/AuthContext";
 import { WelcomeRotator } from "../components/WelcomeRotator";
+import { ReceiveMoneyModal } from "../components/ReceiveMoneyModal";
+import { QrCode } from "lucide-react";
 import { ActivityChart, BreakdownChart } from "../components/DashboardCharts";
 import { Skeleton, TransactionSkeleton } from "../components/Skeleton";
 
@@ -17,6 +19,7 @@ export function Dashboard() {
   const { stats, transactions, isLoading } = useWallet();
   const { user } = useAuth();
   const [showBalance, setShowBalance] = useState(true);
+  const [showReceiveModal, setShowReceiveModal] = useState(false);
 
   // Message selon l'heure
   const getGreeting = () => {
@@ -134,7 +137,7 @@ export function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.25 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-3"
+        className="grid grid-cols-2 md:grid-cols-5 gap-3"
       >
         <Link to="/transfer">
           <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
@@ -146,6 +149,17 @@ export function Dashboard() {
             </CardContent>
           </Card>
         </Link>
+        
+        <button onClick={() => setShowReceiveModal(true)} className="w-full text-left">
+          <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
+            <CardContent className="p-4 flex flex-col items-center text-center gap-2">
+              <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center">
+                <QrCode className="w-6 h-6 text-teal-600" />
+              </div>
+              <p className="text-sm font-medium text-foreground">Recevoir</p>
+            </CardContent>
+          </Card>
+        </button>
 
 <Link to="/wallet?tab=deposit">
   <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
@@ -372,6 +386,12 @@ export function Dashboard() {
           </CardContent>
         </Card>
       </motion.div>
+      <ReceiveMoneyModal 
+        isOpen={showReceiveModal}
+        onClose={() => setShowReceiveModal(false)}
+        userId={user?.id || ""}
+        userName={user?.name || "Mon compte"}
+      />
     </motion.div>
   );
 }

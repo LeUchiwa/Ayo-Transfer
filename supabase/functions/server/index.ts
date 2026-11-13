@@ -468,10 +468,22 @@ async function handleGetPinStatus(userId: string) {
 
 async function handleSetPin(req: Request, userId: string) {
   const body = await req.json().catch(() => ({}));
-  const { pin } = body;
+  const { pin, currentPin } = body;
 
   if (!pin || !/^\d{4}$/.test(pin)) {
-    return Response.json({ error: "Le code PIN doit contenir exactement 4 chiffres." }, { status: 400, headers: corsHeaders });
+    return Response.json({ error: "Le nouveau code PIN doit contenir exactement 4 chiffres." }, { status: 400, headers: corsHeaders });
+  }
+
+  const existingPin = await kv.get(`pin:${userId}`);
+  
+  if (existingPin) {
+    if (!currentPin) {
+      return Response.json({ error: "L'ancien code PIN est requis." }, { status: 400, headers: corsHeaders });
+    }
+    const isCurrentValid = await verifyPassword(currentPin, existingPin);
+    if (!isCurrentValid) {
+      return Response.json({ error: "Ancien code PIN incorrect." }, { status: 401, headers: corsHeaders });
+    }
   }
 
   const hashedPin = await hashPassword(pin);
@@ -1372,6 +1384,21 @@ async function handleCheckBalance(req: Request, userId: string) {
 // ═══════════════════════════════════════════════
 // HANDLERS — PROFIL CLIENT
 // ═══════════════════════════════════════════════
+
+async function handleGetPublicProfile(userId: string) {
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const { data: { user }, error } = await supabase.auth.admin.getUserById(userId);
+  
+  if (error || !user) {
+    return Response.json({ error: "Utilisateur introuvable" }, { status: 404, headers: corsHeaders });
+  }
+  
+  return Response.json({
+    id: user.id,
+    name: user.user_metadata?.name || user.email?.split("@")[0] || "Utilisateur AYO",
+    email: user.email
+  }, { headers: corsHeaders });
+}
 
 async function handleGetProfile(userId: string) {
   const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
@@ -2432,6 +2459,12 @@ export default {
       } catch (err) {
         return Response.json({ error: "Rotation failed", details: String(err) }, { status: 500, headers: corsHeaders });
       }
+    }
+
+    // ═══ ROUTE PUBLIQUE (Pas de JWT requis) ═══
+    if (method === "GET" && path.includes("/profile/public/")) {
+      const publicUserId = path.split("/profile/public/")[1];
+      return await handleGetPublicProfile(publicUserId);
     }
 
     // ═══ AUTH ═══

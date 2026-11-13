@@ -120,8 +120,8 @@ export const walletApi = {
   getPinStatus: async (): Promise<{ hasPin: boolean }> => {
     return await apiCall('/profile/pin');
   },
-  setPin: async (pin: string): Promise<{ success: boolean }> => {
-    return await apiCall('/profile/pin', { method: 'POST', body: { pin } });
+  setPin: async (pin: string, currentPin?: string): Promise<{ success: boolean }> => {
+    return await apiCall('/profile/pin', { method: 'POST', body: { pin, currentPin } });
   },
   getBeneficiaries: async (): Promise<Beneficiary[]> => {
     const data = await apiCall('/beneficiaries');

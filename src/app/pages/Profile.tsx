@@ -304,11 +304,12 @@ export function Profile() {
 
         <PinModal 
           isOpen={showPinModal}
+          isChanging={hasPin}
           onClose={() => setShowPinModal(false)}
           title="Configurer le PIN"
           description="Choisissez un code à 4 chiffres pour sécuriser vos transferts."
-          onSubmit={async (pin) => {
-            await walletApi.setPin(pin);
+          onSubmit={async (pin, currentPin) => {
+            await walletApi.setPin(pin, currentPin);
             setHasPin(true);
             setShowPinModal(false);
             toast.success("Code PIN configuré avec succès !");

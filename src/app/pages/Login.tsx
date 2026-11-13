@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router';
+import { useNavigate, Link, useSearchParams } from "react-router";
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../../../utils/supabase/client';
 import { Button } from '../components/ui/button';
@@ -14,6 +14,8 @@ import ayoLogo from '@/imports/AYO.png';
 
 export function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
   const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +25,9 @@ export function Login() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/', { replace: true });
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("redirect") || "/";
+      navigate(redirectTo, { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -37,7 +41,7 @@ export function Login() {
     try {
       await login(email, password);
       toast.success('Connexion réussie !');
-      navigate('/');
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       if ((error as Error).message === "BANNED") {
         setIsBanned(true);

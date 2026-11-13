@@ -18,12 +18,17 @@ import { Terms } from "./pages/Terms";
 import { Privacy } from "./pages/Privacy";
 import { Profile } from "./pages/Profile";
 import { Landing } from "./pages/Landing";
+import { PayPage } from "./pages/PayPage";
 import { NotFound } from "./pages/NotFound";
 
 export const router = createBrowserRouter([
   {
     path: "/landing",
     Component: Landing,
+  },
+  {
+    path: "/pay/:userId",
+    Component: PayPage,
   },
   {
     path: "/login",
