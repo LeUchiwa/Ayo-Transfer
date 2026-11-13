@@ -87,14 +87,14 @@ export function Landing() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-900">
       {/* ═══════ HEADER ═══════ */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100">
+      <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link to="/landing" className="flex items-center gap-3">
             <img src={ayoLogo} alt="AYO" className="h-10 w-auto" />
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
+          <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
             <a href="#features" className="hover:text-teal-600 transition-colors">Fonctionnalités</a>
             <a href="#pricing" className="hover:text-teal-600 transition-colors">Tarifs</a>
             <a href="#faq" className="hover:text-teal-600 transition-colors">FAQ</a>
@@ -143,13 +143,13 @@ export function Landing() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mb-8">
                 <Link to="/register">
-                  <Button size="lg" className="bg-white text-teal-700 hover:bg-teal-50 gap-2 w-full sm:w-auto font-semibold">
+                  <Button size="lg" className="bg-white dark:bg-slate-900 text-teal-700 hover:bg-teal-50 gap-2 w-full sm:w-auto font-semibold">
                     Commencer gratuitement
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
                 <a href="#features">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white/10 dark:bg-slate-900/10 text-white border-white/30 hover:bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm">
                     Voir les fonctionnalités
                   </Button>
                 </a>
@@ -177,11 +177,11 @@ export function Landing() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative hidden lg:block"
             >
-              <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/50">
+              <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/50">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">Solde disponible</p>
-                    <p className="text-3xl font-bold text-gray-900">50 000 FCFA</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Solde disponible</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">50 000 FCFA</p>
                   </div>
                   <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center">
                     <Wallet className="w-6 h-6 text-teal-600" />
@@ -193,12 +193,12 @@ export function Landing() {
                     { label: "Marie Ngono", amount: "-10 000", dir: "sent" },
                     { label: "Dépôt MTN", amount: "+25 000", dir: "received" },
                   ].map((tx, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-800/50 rounded-lg">
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.dir === "received" ? "bg-green-100" : "bg-red-100"}`}>
                           {tx.dir === "received" ? <TrendingUp className="w-4 h-4 text-green-600" /> : <Send className="w-4 h-4 text-red-600" />}
                         </div>
-                        <p className="text-sm font-medium text-gray-900">{tx.label}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{tx.label}</p>
                       </div>
                       <p className={`text-sm font-semibold ${tx.dir === "received" ? "text-green-600" : "text-red-600"}`}>
                         {tx.amount} FCFA
@@ -213,7 +213,7 @@ export function Landing() {
       </section>
 
       {/* ═══════ STATS ═══════ */}
-      <section className="py-12 bg-white border-y border-gray-100">
+      <section className="py-12 bg-white dark:bg-slate-900 border-y border-gray-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {[
             { value: "10 000+", label: "Utilisateurs actifs" },
@@ -223,33 +223,33 @@ export function Landing() {
           ].map((stat) => (
             <div key={stat.label}>
               <p className="text-3xl md:text-4xl font-bold text-teal-600 mb-1">{stat.value}</p>
-              <p className="text-sm text-gray-500">{stat.label}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{stat.label}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ═══════ FEATURES ═══════ */}
-      <section id="features" className="py-20 bg-white">
+      <section id="features" className="py-20 bg-white dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Tout ce dont vous avez besoin
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               AYO combine simplicité, sécurité et rapidité pour vous offrir la meilleure
               expérience de transfert d'argent.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {FEATURES.map((f) => (
-              <Card key={f.title} className="hover:shadow-lg transition-shadow border-gray-100">
+              <Card key={f.title} className="hover:shadow-lg transition-shadow border-gray-100 dark:border-slate-800">
                 <CardContent className="pt-6">
                   <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-4">
                     <f.icon className="w-6 h-6 text-teal-600" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{f.title}</h3>
-                  <p className="text-sm text-gray-600">{f.desc}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{f.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{f.desc}</p>
                 </CardContent>
               </Card>
             ))}
@@ -261,21 +261,21 @@ export function Landing() {
       <section id="pricing" className="py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Tarifs transparents
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Pas de frais cachés, pas d'abonnement. Vous payez uniquement quand vous utilisez AYO.
             </p>
           </div>
-          <Card className="border-gray-100 shadow-xl overflow-hidden">
+          <Card className="border-gray-100 dark:border-slate-800 shadow-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-slate-800/50">
                   <tr>
-                    <th className="text-left px-6 py-4 font-semibold text-gray-700">Méthode</th>
-                    <th className="text-center px-6 py-4 font-semibold text-gray-700">Dépôt</th>
-                    <th className="text-center px-6 py-4 font-semibold text-gray-700">Retrait</th>
+                    <th className="text-left px-6 py-4 font-semibold text-gray-700 dark:text-gray-300">Méthode</th>
+                    <th className="text-center px-6 py-4 font-semibold text-gray-700 dark:text-gray-300">Dépôt</th>
+                    <th className="text-center px-6 py-4 font-semibold text-gray-700 dark:text-gray-300">Retrait</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -284,15 +284,15 @@ export function Landing() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <ServiceLogo name={row.method} className="w-8 h-8 object-contain" />
-                          <span className="font-medium text-gray-900">{row.method}</span>
+                          <span className="font-medium text-gray-900 dark:text-gray-100">{row.method}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className={row.deposit === "0%" ? "text-green-600 font-semibold" : "text-gray-700"}>
+                        <span className={row.deposit === "0%" ? "text-green-600 font-semibold" : "text-gray-700 dark:text-gray-300"}>
                           {row.deposit}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-center text-gray-700">{row.withdraw}</td>
+                      <td className="px-6 py-4 text-center text-gray-700 dark:text-gray-300">{row.withdraw}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -309,24 +309,24 @@ export function Landing() {
       </section>
 
       {/* ═══════ FAQ ═══════ */}
-      <section id="faq" className="py-20 bg-white">
+      <section id="faq" className="py-20 bg-white dark:bg-slate-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Questions fréquentes
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               Tout ce que vous devez savoir sur AYO
             </p>
           </div>
           <div className="space-y-3">
             {FAQ.map((item, i) => (
-              <Card key={i} className="border-gray-100 overflow-hidden">
+              <Card key={i} className="border-gray-100 dark:border-slate-800 overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 transition-colors"
                 >
-                  <span className="font-medium text-gray-900">{item.q}</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{item.q}</span>
                   <ChevronDown
                     className={`w-5 h-5 text-gray-400 transition-transform ${openFaq === i ? "rotate-180" : ""}`}
                   />
@@ -338,7 +338,7 @@ export function Landing() {
                     exit={{ height: 0, opacity: 0 }}
                     className="px-6 pb-4"
                   >
-                    <p className="text-sm text-gray-600 leading-relaxed">{item.a}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.a}</p>
                   </motion.div>
                 )}
               </Card>
@@ -358,7 +358,7 @@ export function Landing() {
             et recevoir de l'argent en toute sécurité.
           </p>
           <Link to="/register">
-            <Button size="lg" className="bg-white text-teal-600 hover:bg-gray-100 gap-2">
+            <Button size="lg" className="bg-white dark:bg-slate-900 text-teal-600 hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 gap-2">
               Créer mon compte gratuit
               <ArrowRight className="w-4 h-4" />
             </Button>

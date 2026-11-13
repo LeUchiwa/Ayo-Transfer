@@ -106,8 +106,8 @@ export function ResetPassword() {
   return (
     <div className="min-h-screen flex bg-background">
       <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-primary via-primary to-cyan-600 overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-48 translate-x-48" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full translate-y-40 -translate-x-40" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 dark:bg-slate-900/10 rounded-full -translate-y-48 translate-x-48" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 dark:bg-slate-900/5 rounded-full translate-y-40 -translate-x-40" />
 
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           <motion.div
@@ -141,7 +141,7 @@ export function ResetPassword() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="bg-white/10 backdrop-blur-sm rounded-xl p-3"
+            className="bg-white/10 dark:bg-slate-900/10 backdrop-blur-sm rounded-xl p-3"
           >
             <div className="text-white">
               <WelcomeRotator />

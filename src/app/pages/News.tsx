@@ -53,7 +53,7 @@ export function News() {
     const Icon = article.category === "finance" ? TrendingUp : Newspaper;
     const hasContent = !!article.content && article.content.trim().length > 0;
     return (
-      <Card className="bg-white/80 backdrop-blur-sm shadow-md border-orange-100 hover:shadow-xl transition-all">
+      <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-md border-orange-100 hover:shadow-xl transition-all">
         <CardHeader>
           <div className="flex items-start justify-between gap-2 mb-2">
             <Badge
@@ -62,16 +62,16 @@ export function News() {
             >
               {article.tag || (article.category === "finance" ? "Finance" : "Général")}
             </Badge>
-            <div className="flex items-center gap-1 text-xs text-gray-500">
+            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
               {article.region === "cameroun" ? (<><MapPin className="w-3 h-3" />Cameroun</>) : (<><Globe className="w-3 h-3" />Monde</>)}
             </div>
           </div>
           <CardTitle className="text-lg leading-tight">{article.title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <CardDescription className="text-gray-600 mb-4">{article.description}</CardDescription>
+          <CardDescription className="text-gray-600 dark:text-gray-400 mb-4">{article.description}</CardDescription>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
               <Icon className="w-4 h-4" />
               <span className="font-medium">{article.source}</span>
               <span>•</span>
@@ -93,8 +93,8 @@ export function News() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">Actualités</h2>
-          <p className="text-gray-600 mt-1">Restez informé des dernières nouvelles financières et économiques</p>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Actualités</h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Restez informé des dernières nouvelles financières et économiques</p>
         </div>
         <Button variant="outline" size="sm" onClick={load} disabled={loading} className="gap-2">
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
@@ -102,7 +102,7 @@ export function News() {
         </Button>
       </div>
 
-      <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-orange-100">
+      <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg border-orange-100">
         <CardContent className="pt-6">
           <div className="space-y-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -131,7 +131,7 @@ export function News() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[0, 1, 2, 3].map((i) => (
-            <Card key={i} className="bg-white/80 shadow-md border-orange-100 animate-pulse">
+            <Card key={i} className="bg-white/80 dark:bg-slate-900/80 shadow-md border-orange-100 animate-pulse">
               <CardContent className="p-6 space-y-3">
                 <div className="h-4 w-24 bg-muted rounded" />
                 <div className="h-5 w-full bg-muted rounded" />
@@ -149,10 +149,10 @@ export function News() {
           </CardContent>
         </Card>
       ) : filtered.length === 0 ? (
-        <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-orange-100">
+        <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg border-orange-100">
           <CardContent className="py-12 text-center">
             <Newspaper className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">Aucune actualité trouvée pour cette catégorie</p>
+            <p className="text-gray-500 dark:text-gray-400">Aucune actualité trouvée pour cette catégorie</p>
           </CardContent>
         </Card>
       ) : (
@@ -168,7 +168,7 @@ export function News() {
           onClick={() => setReadingArticle(null)}
         >
           <Card
-            className="bg-white max-w-2xl w-full max-h-[80vh] overflow-auto"
+            className="bg-white dark:bg-slate-900 max-w-2xl w-full max-h-[80vh] overflow-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <CardHeader>
@@ -178,7 +178,7 @@ export function News() {
                     <Badge variant="secondary" className={readingArticle.category === "finance" ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}>
                       {readingArticle.tag || (readingArticle.category === "finance" ? "Finance" : "Général")}
                     </Badge>
-                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                       {readingArticle.region === "cameroun" ? (<><MapPin className="w-3 h-3" />Cameroun</>) : (<><Globe className="w-3 h-3" />Monde</>)}
                     </span>
                   </div>
@@ -193,7 +193,7 @@ export function News() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                 {readingArticle.content}
               </p>
             </CardContent>

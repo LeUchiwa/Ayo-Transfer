@@ -191,7 +191,7 @@ function getTransactionTypeClass(type: string) {
     case "withdrawal": return "bg-red-50 text-red-700";
     case "transfer_sent": return "bg-blue-50 text-blue-700";
     case "transfer_received": return "bg-teal-50 text-teal-700";
-    default: return "bg-gray-100 text-gray-700";
+    default: return "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300";
   }
 }
 
@@ -203,11 +203,11 @@ function DepositStatusBadge({ status }: { status?: string }) {
     coords_ready:       { label: "En attente client", cls: "bg-blue-50 text-blue-700" },
     pending_validation: { label: "À valider",         cls: "bg-orange-50 text-orange-700" },
     pending:            { label: "À valider",         cls: "bg-orange-50 text-orange-700" },
-    cancelled:          { label: "Annulé",            cls: "bg-gray-100 text-gray-600" },
+    cancelled:          { label: "Annulé",            cls: "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400" },
     completed:          { label: "Complété",          cls: "bg-green-50 text-green-700" },
     failed:             { label: "Échoué",            cls: "bg-red-50 text-red-700" },
   };
-  const config = map[effective] || { label: effective, cls: "bg-gray-100 text-gray-600" };
+  const config = map[effective] || { label: effective, cls: "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400" };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${config.cls}`}>
       {config.label}
@@ -230,10 +230,10 @@ function StatCard({ icon: Icon, label, value, sub, color }: {
   icon: React.ElementType; label: string; value: string; sub: string; color: string;
 }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 p-5 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-gray-500">{label}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
           <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
           <p className="text-xs text-gray-400 mt-1">{sub}</p>
         </div>
@@ -257,10 +257,10 @@ function StatusBadge({ status }: { status: string }) {
     pending_validation: { label: "À valider",           cls: "bg-orange-50 text-orange-700", icon: AlertCircle },
     processing:         { label: "En cours",            cls: "bg-blue-50 text-blue-700",    icon: RefreshCw },
     failed:             { label: "Échoué",              cls: "bg-red-50 text-red-700",      icon: XCircle },
-    cancelled:          { label: "Annulé",              cls: "bg-gray-100 text-gray-600",   icon: XCircle },
+    cancelled:          { label: "Annulé",              cls: "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400",   icon: XCircle },
     suspended:          { label: "Suspendu",            cls: "bg-red-50 text-red-700",      icon: Ban },
   };
-  const { label, cls, icon: Icon } = map[status] ?? { label: status, cls: "bg-gray-100 text-gray-600", icon: AlertCircle };
+  const { label, cls, icon: Icon } = map[status] ?? { label: status, cls: "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400", icon: AlertCircle };
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${cls}`}>
       <Icon className="w-3 h-3" />
@@ -281,7 +281,7 @@ function RoleBadge({ role }: { role: string }) {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400">
       <UserIcon className="w-3 h-3" />
       User
     </span>
@@ -314,15 +314,15 @@ function UserDetailModal({ user, onClose }: { user: AdminUser; onClose: () => vo
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white text-lg font-bold">
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div>
               <h3 className="text-lg font-bold text-foreground">{user.name}</h3>
-              <p className="text-xs text-gray-500">{user.email}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
               {user.suspicious && (
                 <span className="inline-flex items-center gap-1 ml-2 px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-700 font-medium">
                   ⚠️ Suspect
@@ -330,14 +330,14 @@ function UserDetailModal({ user, onClose }: { user: AdminUser; onClose: () => vo
               )}
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400">
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 text-gray-400">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Rôle</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">Rôle</span>
             <RoleBadge role={user.role} />
           </div>
 
@@ -359,25 +359,25 @@ function UserDetailModal({ user, onClose }: { user: AdminUser; onClose: () => vo
             </div>
           </div>
 
-          <div className="space-y-3 pt-3 border-t border-gray-100">
+          <div className="space-y-3 pt-3 border-t border-gray-100 dark:border-slate-800">
             <div className="flex items-start gap-3">
               <Calendar className="w-4 h-4 text-gray-400 mt-0.5" />
               <div className="flex-1">
-                <p className="text-xs text-gray-500">Inscription</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Inscription</p>
                 <p className="text-sm text-foreground font-medium">{formatDate(user.createdAt)}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Clock className="w-4 h-4 text-gray-400 mt-0.5" />
               <div className="flex-1">
-                <p className="text-xs text-gray-500">Dernière connexion</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Dernière connexion</p>
                 <p className="text-sm text-foreground font-medium">{formatDate(user.lastSignInAt)}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Mail className="w-4 h-4 text-gray-400 mt-0.5" />
               <div className="flex-1">
-                <p className="text-xs text-gray-500">Email confirmé</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Email confirmé</p>
                 <p className="text-sm text-foreground font-medium">
                   {user.emailConfirmedAt ? "✅ Oui" : "⚠️ Non"}
                 </p>
@@ -386,8 +386,8 @@ function UserDetailModal({ user, onClose }: { user: AdminUser; onClose: () => vo
           </div>
         </div>
 
-        <div className="p-6 border-t border-gray-100 flex justify-end">
-          <button onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+        <div className="p-6 border-t border-gray-100 dark:border-slate-800 flex justify-end">
+          <button onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50">
             Fermer
           </button>
         </div>
@@ -401,18 +401,18 @@ function UserDetailModal({ user, onClose }: { user: AdminUser; onClose: () => vo
 function ServiceDetailModal({ service, onClose }: { service: AdminService; onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center text-2xl">
+            <div className="w-12 h-12 rounded-xl bg-gray-50 dark:bg-slate-800/50 flex items-center justify-center text-2xl">
               {service.icon}
             </div>
             <div>
               <h3 className="text-lg font-bold text-foreground">{service.name}</h3>
-              <p className="text-xs text-gray-500">{getServiceTypeLabel(service.type)}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{getServiceTypeLabel(service.type)}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400">
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 text-gray-400">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -425,7 +425,7 @@ function ServiceDetailModal({ service, onClose }: { service: AdminService; onClo
           </div>
 
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-3">Répartition</p>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Répartition</p>
             <div className="grid grid-cols-3 gap-2">
               <div className="bg-green-50 rounded-lg p-3 text-center">
                 <ArrowDownRight className="w-4 h-4 text-green-600 mx-auto mb-1" />
@@ -446,22 +446,22 @@ function ServiceDetailModal({ service, onClose }: { service: AdminService; onClo
           </div>
 
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-3">Frais appliqués</p>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Frais appliqués</p>
             <div className="space-y-2">
               <div className="flex items-center justify-between py-2 border-b border-gray-50">
-                <span className="text-sm text-gray-600">Dépôt</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Dépôt</span>
                 <span className="text-sm font-medium text-foreground">{(service.depositFee * 100).toFixed(1)}%</span>
               </div>
               <div className="flex items-center justify-between py-2">
-                <span className="text-sm text-gray-600">Retrait</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Retrait</span>
                 <span className="text-sm font-medium text-foreground">{(service.withdrawFee * 100).toFixed(1)}%</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="p-6 border-t border-gray-100 flex justify-end">
-          <button onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+        <div className="p-6 border-t border-gray-100 dark:border-slate-800 flex justify-end">
+          <button onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50">
             Fermer
           </button>
         </div>
@@ -483,13 +483,13 @@ function TransactionDetailModal({ tx, onClose }: { tx: AdminTransaction; onClose
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-slate-800">
           <div>
             <h3 className="text-lg font-bold text-foreground">Transaction</h3>
-            <p className="text-xs text-gray-500 font-mono">{tx.reference}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">{tx.reference}</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400">
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 text-gray-400">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -514,7 +514,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: AdminTransaction; onClose
             <div className="flex items-start gap-3">
               <UserIcon className="w-4 h-4 text-gray-400 mt-0.5" />
               <div className="flex-1">
-                <p className="text-xs text-gray-500">Utilisateur</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Utilisateur</p>
                 <p className="text-sm text-foreground font-medium">{tx.userName || "Inconnu"}</p>
                 {tx.userEmail && <p className="text-xs text-gray-400">{tx.userEmail}</p>}
               </div>
@@ -522,7 +522,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: AdminTransaction; onClose
             <div className="flex items-start gap-3">
               <Smartphone className="w-4 h-4 text-gray-400 mt-0.5" />
               <div className="flex-1">
-                <p className="text-xs text-gray-500">Service</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Service</p>
                 <p className="text-sm text-foreground font-medium">{tx.methodIcon} {tx.method}</p>
                 {tx.phone && <p className="text-xs text-gray-400">Tél : {tx.phone}</p>}
               </div>
@@ -531,7 +531,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: AdminTransaction; onClose
               <div className="flex items-start gap-3">
                 <Send className="w-4 h-4 text-gray-400 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500">Destinataire</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Destinataire</p>
                   <p className="text-sm text-foreground font-medium">{tx.recipient}</p>
                 </div>
               </div>
@@ -539,7 +539,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: AdminTransaction; onClose
             <div className="flex items-start gap-3">
               <Calendar className="w-4 h-4 text-gray-400 mt-0.5" />
               <div className="flex-1">
-                <p className="text-xs text-gray-500">Créée le</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Créée le</p>
                 <p className="text-sm text-foreground font-medium">{formatDate(tx.createdAt)}</p>
               </div>
             </div>
@@ -547,7 +547,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: AdminTransaction; onClose
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500">Complétée le</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Complétée le</p>
                   <p className="text-sm text-foreground font-medium">{formatDate(tx.completedAt)}</p>
                 </div>
               </div>
@@ -556,7 +556,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: AdminTransaction; onClose
               <div className="flex items-start gap-3">
                 <XCircle className="w-4 h-4 text-red-500 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500">Échouée le</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Échouée le</p>
                   <p className="text-sm text-foreground font-medium">{formatDate(tx.failedAt)}</p>
                   {tx.failureReason && <p className="text-xs text-red-600 mt-1">{tx.failureReason}</p>}
                 </div>
@@ -565,8 +565,8 @@ function TransactionDetailModal({ tx, onClose }: { tx: AdminTransaction; onClose
           </div>
         </div>
 
-        <div className="p-6 border-t border-gray-100 flex justify-end">
-          <button onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+        <div className="p-6 border-t border-gray-100 dark:border-slate-800 flex justify-end">
+          <button onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50">
             Fermer
           </button>
         </div>
@@ -594,14 +594,14 @@ function PasswordRotationModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
             <AlertCircle className="w-5 h-5 text-amber-600" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-foreground">Nouveau mot de passe</h3>
-            <p className="text-xs text-gray-500">Notez-le MAINTENANT</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Notez-le MAINTENANT</p>
           </div>
         </div>
 
@@ -609,10 +609,10 @@ function PasswordRotationModal({
           ⚠️ Ce mot de passe ne sera <strong>plus jamais affiché</strong>. Copiez-le et stockez-le dans un endroit sûr.
         </div>
 
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
-          <p className="text-xs text-gray-500 mb-1">Identifiant :</p>
+        <div className="bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg p-4 mb-4">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Identifiant :</p>
           <p className="font-mono text-sm font-bold text-foreground mb-3">AYO-ADMIN</p>
-          <p className="text-xs text-gray-500 mb-1">Mot de passe :</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Mot de passe :</p>
           <p className="font-mono text-lg font-bold text-primary break-all">{newPassword}</p>
         </div>
 
@@ -635,7 +635,7 @@ function PasswordRotationModal({
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50"
           >
             Fermer
           </button>
@@ -1323,7 +1323,7 @@ export function Admin() {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.id
                   ? "bg-primary text-white"
-                  : "text-white/60 hover:bg-white/10 hover:text-white"
+                  : "text-white/60 hover:bg-white/10 dark:bg-slate-900/10 hover:text-white"
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -1340,7 +1340,7 @@ export function Admin() {
         <div className="p-4 border-t border-white/10 space-y-2">
           <button
             onClick={() => navigate("/")}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 hover:bg-white/10 dark:bg-slate-900/10 hover:text-white transition-colors"
           >
             <ArrowUpRight className="w-4 h-4" />
             Retour à l'app
@@ -1357,7 +1357,7 @@ export function Admin() {
 
       {/* Main content */}
       <div className="flex-1 ml-60">
-        <header className="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+        <header className="bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 px-8 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
           <div>
             <h1 className="text-lg font-bold text-foreground">
               {TABS.find(t => t.id === activeTab)?.label}
@@ -1415,30 +1415,30 @@ export function Admin() {
 
               {stats && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+                  <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 p-5 shadow-sm">
                     <div className="flex items-center gap-2 mb-3">
                       <ArrowDownRight className="w-4 h-4 text-green-600" />
-                      <p className="text-sm font-medium text-gray-700">Dépôts</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Dépôts</p>
                     </div>
                     <p className="text-2xl font-bold text-foreground">
                       {stats.totalDeposits.toLocaleString()} FCFA
                     </p>
                     <p className="text-xs text-gray-400 mt-1">{stats.countDeposits} transactions</p>
                   </div>
-                  <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+                  <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 p-5 shadow-sm">
                     <div className="flex items-center gap-2 mb-3">
                       <ArrowUpRight className="w-4 h-4 text-red-600" />
-                      <p className="text-sm font-medium text-gray-700">Retraits</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Retraits</p>
                     </div>
                     <p className="text-2xl font-bold text-foreground">
                       {stats.totalWithdrawals.toLocaleString()} FCFA
                     </p>
                     <p className="text-xs text-gray-400 mt-1">{stats.countWithdrawals} transactions</p>
                   </div>
-                  <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+                  <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 p-5 shadow-sm">
                     <div className="flex items-center gap-2 mb-3">
                       <Send className="w-4 h-4 text-blue-600" />
-                      <p className="text-sm font-medium text-gray-700">Transferts</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Transferts</p>
                     </div>
                     <p className="text-2xl font-bold text-foreground">
                       {stats.totalTransfers.toLocaleString()} FCFA
@@ -1478,7 +1478,7 @@ export function Admin() {
                   <button
                     onClick={loadPendingDeposits}
                     disabled={loadingPending}
-                    className="text-xs text-gray-500 hover:text-primary"
+                    className="text-xs text-gray-500 dark:text-gray-400 hover:text-primary"
                   >
                     Rafraîchir
                   </button>
@@ -1491,21 +1491,21 @@ export function Admin() {
                 {loadingPending && pendingDeposits.length === 0 ? (
                   <SkeletonTable rows={3} cols={7} />
                 ) : pendingDeposits.length === 0 ? (
-                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center text-gray-400 text-sm">
+                  <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm p-6 text-center text-gray-400 text-sm">
                     Aucun dépôt en attente
                   </div>
                 ) : (
-                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-100 bg-gray-50">
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Date</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Référence</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Montant</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Service</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Téléphone</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Statut</th>
-                          <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                        <tr className="border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50">
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Date</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Référence</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Montant</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Service</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Téléphone</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Statut</th>
+                          <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
@@ -1515,19 +1515,19 @@ export function Admin() {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: i * 0.03 }}
-                            className="hover:bg-gray-50/50"
+                            className="hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50/50"
                           >
-                            <td className="px-4 py-3 text-xs text-gray-500">
+                            <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">
                               {new Date(deposit.createdAt).toLocaleString("fr-FR", {
                                 day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
                               })}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-gray-500">{deposit.reference}</td>
+                            <td className="px-4 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{deposit.reference}</td>
                             <td className="px-4 py-3 font-semibold text-foreground">
                               {deposit.amount.toLocaleString()} FCFA
                             </td>
-                            <td className="px-4 py-3 text-gray-600">{deposit.method}</td>
-                            <td className="px-4 py-3 text-gray-500 text-xs">{deposit.phone || "—"}</td>
+                            <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{deposit.method}</td>
+                            <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">{deposit.phone || "—"}</td>
 
                             {/* ⬇️ NOUVEAU : colonne Statut */}
                             <td className="px-4 py-3">
@@ -1598,7 +1598,7 @@ export function Admin() {
 
                               {/* Référence client soumise (si présente) */}
                               {deposit.clientInfo?.txRef && (
-                                <p className="text-xs text-gray-500 mt-1 text-right">
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-right">
                                   Réf. client : <span className="font-mono">{deposit.clientInfo.txRef}</span>
                                 </p>
                               )}
@@ -1618,7 +1618,7 @@ export function Admin() {
                   <button
                     onClick={loadPendingWithdrawals}
                     disabled={loadingWithdrawals}
-                    className="text-xs text-gray-500 hover:text-primary"
+                    className="text-xs text-gray-500 dark:text-gray-400 hover:text-primary"
                   >
                     Rafraîchir
                   </button>
@@ -1626,19 +1626,19 @@ export function Admin() {
                 {loadingWithdrawals && pendingWithdrawals.length === 0 ? (
                   <SkeletonTable rows={3} cols={5} />
                 ) : pendingWithdrawals.length === 0 ? (
-                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center text-gray-400 text-sm">
+                  <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm p-6 text-center text-gray-400 text-sm">
                     Aucun retrait en attente
                   </div>
                 ) : (
-                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-100 bg-gray-50">
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Date</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Référence</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Montant</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Service</th>
-                          <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                        <tr className="border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50">
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Date</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Référence</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Montant</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Service</th>
+                          <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
@@ -1648,14 +1648,14 @@ export function Admin() {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: i * 0.03 }}
-                            className="hover:bg-gray-50/50"
+                            className="hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50/50"
                           >
-                            <td className="px-4 py-3 text-xs text-gray-500">
+                            <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">
                               {new Date(w.createdAt).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-gray-500">{w.reference}</td>
+                            <td className="px-4 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{w.reference}</td>
                             <td className="px-4 py-3 font-semibold text-foreground">{w.amount.toLocaleString()} FCFA</td>
-                            <td className="px-4 py-3 text-gray-600">{w.method}</td>
+                            <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{w.method}</td>
                             <td className="px-4 py-3">
                               <div className="flex items-center justify-end gap-2">
                                 <button
@@ -1688,13 +1688,13 @@ export function Admin() {
           {activeTab === "kyc" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Vérifiez les pièces d'identité soumises par les utilisateurs.
                 </p>
                 <button
                   onClick={loadKyc}
                   disabled={loadingKyc}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 disabled:opacity-50"
                 >
                   <RefreshCw className={`w-4 h-4 ${loadingKyc ? "animate-spin" : ""}`} />
                   Rafraîchir
@@ -1702,21 +1702,21 @@ export function Admin() {
               </div>
 
               {kycList.length === 0 ? (
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
+                <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm p-12 text-center">
                   <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
-                  <p className="text-sm font-medium text-gray-700">Aucun dossier en attente</p>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Aucun dossier en attente</p>
                   <p className="text-xs text-gray-400 mt-1">Les nouvelles soumissions apparaîtront ici.</p>
                 </div>
               ) : (
                 <div className="grid gap-4">
                   {kycList.map((kyc) => (
-                    <div key={kyc.userId} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-col gap-4">
+                    <div key={kyc.userId} className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm p-6 flex flex-col gap-4">
 
                       {/* Infos utilisateur */}
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="font-bold text-lg text-foreground">{kyc.fullName}</h3>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
                             <strong>Type :</strong> {kyc.idType.toUpperCase()} • <strong>Numéro :</strong> {kyc.idNumber}
                           </p>
                           <p className="text-xs text-gray-400 mt-1">
@@ -1729,8 +1729,8 @@ export function Admin() {
                       </div>
 
                       {/* Documents à vérifier */}
-                      <div className="pt-2 border-t border-gray-100">
-                        <h4 className="text-sm font-semibold text-gray-700 mb-2">Documents à vérifier</h4>
+                      <div className="pt-2 border-t border-gray-100 dark:border-slate-800">
+                        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Documents à vérifier</h4>
                         <div className="flex flex-wrap gap-2">
                           <Button
                             variant="outline"
@@ -1793,13 +1793,13 @@ export function Admin() {
                     value={userSearch}
                     onChange={e => setUserSearch(e.target.value)}
                     placeholder="Rechercher par nom ou email..."
-                    className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm"
+                    className="w-full pl-9 pr-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm"
                   />
                 </div>
                 <button
                   onClick={loadUsers}
                   disabled={loadingUsers}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 disabled:opacity-50"
                 >
                   <RefreshCw className={`w-4 h-4 ${loadingUsers ? "animate-spin" : ""}`} />
                   Rafraîchir
@@ -1823,16 +1823,16 @@ export function Admin() {
               {loadingUsers && users.length === 0 ? (
                 <SkeletonTable rows={5} cols={6} />
               ) : (
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-100 bg-gray-50">
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Utilisateur</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Rôle</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Solde</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Envoyé / Reçu</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Dernière connexion</th>
-                        <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                      <tr className="border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50">
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Utilisateur</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Rôle</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Solde</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Envoyé / Reçu</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Dernière connexion</th>
+                        <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -1842,7 +1842,7 @@ export function Admin() {
   initial={{ opacity: 0, x: -10 }}
   animate={{ opacity: 1, x: 0 }}
   transition={{ duration: 0.3, delay: i * 0.03 }}
-  className="hover:bg-gray-50/50"
+  className="hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50/50"
 >
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
@@ -1870,7 +1870,7 @@ export function Admin() {
                             <p className="text-xs text-blue-600">↗ {user.totalSent.toLocaleString()}</p>
                             <p className="text-xs text-green-600">↙ {user.totalReceived.toLocaleString()}</p>
                           </td>
-                          <td className="px-4 py-3 text-xs text-gray-500">
+                          <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">
                             {user.lastSignInAt
                               ? new Date(user.lastSignInAt).toLocaleString("fr-FR", {
                                   day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
@@ -1937,14 +1937,14 @@ export function Admin() {
                     value={txSearch}
                     onChange={e => setTxSearch(e.target.value)}
                     placeholder="Rechercher (référence, user, service)..."
-                    className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm"
+                    className="w-full pl-9 pr-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm"
                   />
                 </div>
                 <div className="relative">
                   <select
                     value={txTypeFilter}
                     onChange={e => setTxTypeFilter(e.target.value)}
-                    className="appearance-none pl-3 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+                    className="appearance-none pl-3 pr-8 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900"
                   >
                     <option value="all">Tous les types</option>
                     <option value="deposit">Dépôts</option>
@@ -1957,7 +1957,7 @@ export function Admin() {
                   <select
                     value={txStatusFilter}
                     onChange={e => setTxStatusFilter(e.target.value)}
-                    className="appearance-none pl-3 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+                    className="appearance-none pl-3 pr-8 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900"
                   >
                     <option value="all">Tous les statuts</option>
                     <option value="pending">En attente</option>
@@ -1969,7 +1969,7 @@ export function Admin() {
                 <button
                   onClick={loadTransactions}
                   disabled={loadingTransactions}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 disabled:opacity-50"
                 >
                   <RefreshCw className={`w-4 h-4 ${loadingTransactions ? "animate-spin" : ""}`} />
                   Rafraîchir
@@ -1993,29 +1993,29 @@ export function Admin() {
               {loadingTransactions && transactions.length === 0 ? (
                 <SkeletonTable rows={5} cols={8} />
               ) : (
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-100 bg-gray-50">
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Date</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Référence</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Utilisateur</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Type</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Montant</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Service</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Statut</th>
-                        <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                      <tr className="border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50">
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Date</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Référence</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Utilisateur</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Type</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Montant</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Service</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Statut</th>
+                        <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {filteredTransactions.map(tx => (
-                        <tr key={tx.id} className="hover:bg-gray-50/50">
-                          <td className="px-4 py-3 text-xs text-gray-500">
+                        <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50/50">
+                          <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">
                             {new Date(tx.createdAt).toLocaleString("fr-FR", {
                               day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
                             })}
                           </td>
-                          <td className="px-4 py-3 font-mono text-xs text-gray-500">{tx.reference}</td>
+                          <td className="px-4 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{tx.reference}</td>
                           <td className="px-4 py-3">
                             <p className="font-medium text-foreground text-xs">{tx.userName}</p>
                             <p className="text-xs text-gray-400">{tx.userEmail}</p>
@@ -2029,7 +2029,7 @@ export function Admin() {
                             <p className="font-semibold text-foreground">{tx.amount.toLocaleString()} FCFA</p>
                             {tx.fee > 0 && <p className="text-xs text-gray-400">Frais: {tx.fee.toLocaleString()}</p>}
                           </td>
-                          <td className="px-4 py-3 text-xs text-gray-600">
+                          <td className="px-4 py-3 text-xs text-gray-600 dark:text-gray-400">
                             {tx.methodIcon} {tx.method}
                           </td>
                           <td className="px-4 py-3"><StatusBadge status={tx.status} /></td>
@@ -2060,7 +2060,7 @@ export function Admin() {
           {activeTab === "services" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Services de paiement et leurs statistiques réelles.
                 </p>
                 <div className="flex items-center gap-2">
@@ -2074,7 +2074,7 @@ export function Admin() {
                   <button
                     onClick={loadServices}
                     disabled={loadingServices}
-                    className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 disabled:opacity-50"
                   >
                     <RefreshCw className={`w-4 h-4 ${loadingServices ? "animate-spin" : ""}`} />
                     Rafraîchir
@@ -2091,27 +2091,27 @@ export function Admin() {
               {loadingServices && services.length === 0 ? (
                 <SkeletonTable rows={5} cols={7} />
               ) : (
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-100 bg-gray-50">
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Service</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Type</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Frais</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Transactions</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Volume</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Statut</th>
-                        <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                      <tr className="border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50">
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Service</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Type</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Frais</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Transactions</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Volume</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Statut</th>
+                        <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {services.map(service => {
                         const TypeIcon = getServiceTypeIcon(service.type);
                         return (
-                          <tr key={service.id} className="hover:bg-gray-50/50">
+                          <tr key={service.id} className="hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50/50">
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center p-1.5 shrink-0 shadow-sm">
+                                <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 flex items-center justify-center p-1.5 shrink-0 shadow-sm">
                                   <ServiceLogo name={service.id} fallbackIcon={service.icon} className="w-full h-full object-contain" />
                                 </div>
                                 <div>
@@ -2121,14 +2121,14 @@ export function Admin() {
                               </div>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-700">
+                              <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300">
                                 <TypeIcon className="w-3 h-3" />
                                 {getServiceTypeLabel(service.type)}
                               </span>
                             </td>
                             <td className="px-4 py-3 text-xs">
-                              <p className="text-gray-600">Dép. : <strong>{(service.depositFee * 100).toFixed(1)}%</strong></p>
-                              <p className="text-gray-600">Ret. : <strong>{(service.withdrawFee * 100).toFixed(1)}%</strong></p>
+                              <p className="text-gray-600 dark:text-gray-400">Dép. : <strong>{(service.depositFee * 100).toFixed(1)}%</strong></p>
+                              <p className="text-gray-600 dark:text-gray-400">Ret. : <strong>{(service.withdrawFee * 100).toFixed(1)}%</strong></p>
                             </td>
                             <td className="px-4 py-3">
                               <p className="font-semibold text-foreground">{service.transactions}</p>
@@ -2144,13 +2144,13 @@ export function Admin() {
                                 onClick={() => handleToggleService(service)}
                                 disabled={togglingService === service.id}
                                 className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors disabled:opacity-50 ${
-                                  service.active ? "bg-primary" : "bg-gray-200"
+                                  service.active ? "bg-primary" : "bg-gray-200 dark:bg-slate-700"
                                 }`}
                               >
                                 {togglingService === service.id ? (
                                   <Loader2 className="w-3 h-3 text-white animate-spin absolute left-1" />
                                 ) : (
-                                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+                                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white dark:bg-slate-900 shadow transition-transform ${
                                     service.active ? "translate-x-4.5" : "translate-x-0.5"
                                   }`} />
                                 )}
@@ -2201,14 +2201,14 @@ export function Admin() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-2xl">
 
               {/* CARTE 1 : Paramètres généraux */}
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5">
+              <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm p-6 space-y-5">
                 <div className="flex items-center justify-between">
                   <h2 className="font-semibold text-foreground">Paramètres généraux</h2>
 
                   <button
                     onClick={loadSettings}
                     disabled={loadingSettings}
-                    className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-primary disabled:opacity-50"
+                    className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-primary disabled:opacity-50"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${loadingSettings ? "animate-spin" : ""}`} />
                     Rafraîchir
@@ -2223,16 +2223,16 @@ export function Admin() {
                   <>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between py-3 border-b border-gray-50">
-                        <label className="text-sm font-medium text-gray-700">Nom de la plateforme</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nom de la plateforme</label>
                         <input
                           type="text"
                           value={settings.platformName}
                           onChange={e => setSettings({ ...settings, platformName: e.target.value })}
-                          className="text-sm text-right bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="text-sm text-right bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-primary"
                         />
                       </div>
                       <div className="flex items-center justify-between py-3 border-b border-gray-50">
-                        <label className="text-sm font-medium text-gray-700">Frais de transfert (%)</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Frais de transfert (%)</label>
                         <input
                           type="number"
                           step="0.1"
@@ -2240,27 +2240,27 @@ export function Admin() {
                           max="100"
                           value={settings.transferFee}
                           onChange={e => setSettings({ ...settings, transferFee: Number(e.target.value) })}
-                          className="text-sm text-right bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="text-sm text-right bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-primary"
                         />
                       </div>
                       <div className="flex items-center justify-between py-3 border-b border-gray-50">
-                        <label className="text-sm font-medium text-gray-700">Montant minimum (FCFA)</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Montant minimum (FCFA)</label>
                         <input
                           type="number"
                           min="0"
                           value={settings.minAmount}
                           onChange={e => setSettings({ ...settings, minAmount: Number(e.target.value) })}
-                          className="text-sm text-right bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="text-sm text-right bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-primary"
                         />
                       </div>
                       <div className="flex items-center justify-between py-3">
-                        <label className="text-sm font-medium text-gray-700">Montant maximum (FCFA)</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Montant maximum (FCFA)</label>
                         <input
                           type="number"
                           min="0"
                           value={settings.maxAmount}
                           onChange={e => setSettings({ ...settings, maxAmount: Number(e.target.value) })}
-                          className="text-sm text-right bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="text-sm text-right bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:ring-2 focus:ring-primary"
                         />
                       </div>
                     </div>
@@ -2293,7 +2293,7 @@ export function Admin() {
                     </div>
                   </>
                 ) : (
-                  <div className="py-8 text-center text-sm text-gray-500">
+                  <div className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
                     Impossible de charger les paramètres
                   </div>
                 )}
@@ -2301,14 +2301,14 @@ export function Admin() {
 
               {/* CARTE 2 : Coordonnées de Dépôt */}
               {depositCoords && (
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5">
+                <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm p-6 space-y-5">
                   <div className="flex items-center justify-between">
                     <h2 className="font-semibold text-foreground">Coordonnées de Dépôt</h2>
-                    <span className="text-xs text-gray-500">Affichées aux clients</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Affichées aux clients</span>
                   </div>
                   <div className="space-y-4">
                     {Object.keys(depositCoords).map((key) => (
-                      <div key={key} className="p-3 border border-gray-100 rounded-lg space-y-2">
+                      <div key={key} className="p-3 border border-gray-100 dark:border-slate-800 rounded-lg space-y-2">
                         <p className="text-sm font-semibold uppercase text-primary">{key}</p>
                         <div className="grid grid-cols-2 gap-2">
                           <input
@@ -2316,14 +2316,14 @@ export function Admin() {
                             placeholder="Label (ex: Numéro MTN)"
                             value={depositCoords[key].label}
                             onChange={e => setDepositCoords({ ...depositCoords, [key]: { ...depositCoords[key], label: e.target.value } })}
-                            className="text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5"
+                            className="text-sm bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-1.5"
                           />
                           <input
                             type="text"
                             placeholder="Valeur (ex: +237 6...)"
                             value={depositCoords[key].value}
                             onChange={e => setDepositCoords({ ...depositCoords, [key]: { ...depositCoords[key], value: e.target.value } })}
-                            className="text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5"
+                            className="text-sm bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-1.5"
                           />
                         </div>
                         <input
@@ -2331,7 +2331,7 @@ export function Admin() {
                           placeholder="Instruction"
                           value={depositCoords[key].instruction}
                           onChange={e => setDepositCoords({ ...depositCoords, [key]: { ...depositCoords[key], instruction: e.target.value } })}
-                          className="w-full text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5"
+                          className="w-full text-sm bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-1.5"
                         />
                       </div>
                     ))}
@@ -2351,14 +2351,14 @@ export function Admin() {
               )}
 
               {/* CARTE 3 : Sécurité administrateur */}
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-4">
+              <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm p-6 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
                     <KeyRound className="w-5 h-5 text-amber-600" />
                   </div>
                   <div>
                     <h2 className="font-semibold text-foreground">Sécurité administrateur</h2>
-                    <p className="text-xs text-gray-500">Rotation du mot de passe admin</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Rotation du mot de passe admin</p>
                   </div>
                 </div>
 
@@ -2403,14 +2403,14 @@ export function Admin() {
       {/* ⬇️ NOUVEAU : Modal Service (Créer/Modifier) */}
       {serviceModal.open && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-slate-800">
               <h3 className="text-lg font-bold text-foreground">
                 {serviceModal.mode === "create" ? "Nouveau service" : "Modifier le service"}
               </h3>
               <button
                 onClick={() => setServiceModal({ ...serviceModal, open: false })}
-                className="p-2 rounded-lg hover:bg-gray-100 text-gray-400"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 text-gray-400"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2419,7 +2419,7 @@ export function Admin() {
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-gray-700 block mb-1">ID *</label>
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">ID *</label>
                   <input
                     type="text"
                     value={serviceModal.service.id}
@@ -2429,11 +2429,11 @@ export function Admin() {
                     })}
                     placeholder="ex: mtn"
                     disabled={serviceModal.mode === "edit"}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:bg-gray-100 disabled:text-gray-500"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:bg-gray-100 dark:bg-slate-800 disabled:text-gray-500 dark:text-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-700 block mb-1">Icône</label>
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Icône</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -2444,7 +2444,7 @@ export function Admin() {
                       })}
                       placeholder="📱"
                       maxLength={2}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-center text-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-center text-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 opacity-50 pointer-events-none">
                        <ServiceLogo name={serviceModal.service.id} fallbackIcon={serviceModal.service.icon} className="w-full h-full object-contain" />
@@ -2454,7 +2454,7 @@ export function Admin() {
               </div>
 
               <div>
-                <label className="text-xs font-medium text-gray-700 block mb-1">Nom *</label>
+                <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Nom *</label>
                 <input
                   type="text"
                   value={serviceModal.service.name}
@@ -2463,12 +2463,12 @@ export function Admin() {
                     service: { ...serviceModal.service, name: e.target.value },
                   })}
                   placeholder="ex: MTN Mobile Money"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-gray-700 block mb-1">Description</label>
+                <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Description</label>
                 <input
                   type="text"
                   value={serviceModal.service.description}
@@ -2477,20 +2477,20 @@ export function Admin() {
                     service: { ...serviceModal.service, description: e.target.value },
                   })}
                   placeholder="ex: Dépôt et retrait via MTN MoMo"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-gray-700 block mb-1">Type</label>
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Type</label>
                   <select
                     value={serviceModal.service.type}
                     onChange={e => setServiceModal({
                       ...serviceModal,
                       service: { ...serviceModal.service, type: e.target.value },
                     })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   >
                     <option value="mobile-money">Mobile Money</option>
                     <option value="digital">Wallet digital</option>
@@ -2500,14 +2500,14 @@ export function Admin() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-700 block mb-1">Couleur</label>
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Couleur</label>
                   <select
                     value={serviceModal.service.color}
                     onChange={e => setServiceModal({
                       ...serviceModal,
                       service: { ...serviceModal.service, color: e.target.value },
                     })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   >
                     <option value="bg-yellow-500">Jaune (MTN)</option>
                     <option value="bg-orange-500">Orange</option>
@@ -2525,7 +2525,7 @@ export function Admin() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-gray-700 block mb-1">Frais dépôt (%)</label>
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Frais dépôt (%)</label>
                   <input
                     type="number"
                     step="0.1"
@@ -2536,11 +2536,11 @@ export function Admin() {
                       ...serviceModal,
                       service: { ...serviceModal.service, depositFee: Number(e.target.value) },
                     })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-700 block mb-1">Frais retrait (%)</label>
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Frais retrait (%)</label>
                   <input
                     type="number"
                     step="0.1"
@@ -2551,7 +2551,7 @@ export function Admin() {
                       ...serviceModal,
                       service: { ...serviceModal.service, withdrawFee: Number(e.target.value) },
                     })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
               </div>
@@ -2566,14 +2566,14 @@ export function Admin() {
                   })}
                   className="w-4 h-4 rounded border-gray-300"
                 />
-                <span className="text-sm text-gray-700">Service actif (visible par les clients)</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">Service actif (visible par les clients)</span>
               </label>
             </div>
 
-            <div className="flex items-center justify-end gap-2 p-5 border-t border-gray-100">
+            <div className="flex items-center justify-end gap-2 p-5 border-t border-gray-100 dark:border-slate-800">
               <button
                 onClick={() => setServiceModal({ ...serviceModal, open: false })}
-                className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50"
               >
                 Annuler
               </button>
@@ -2596,23 +2596,23 @@ export function Admin() {
       {/* ⬇️ NOUVEAU : Modal confirmation suppression */}
       {deleteServiceModal.open && deleteServiceModal.service && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-sm w-full p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
                 <AlertCircle className="w-5 h-5 text-red-600" />
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Supprimer le service ?</h3>
-                <p className="text-xs text-gray-500">{deleteServiceModal.service.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{deleteServiceModal.service.name}</p>
               </div>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Le service sera masqué des clients. Les transactions existantes restent intactes.
             </p>
             <div className="flex gap-2">
               <button
                 onClick={() => setDeleteServiceModal({ open: false, service: null })}
-                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50"
               >
                 Annuler
               </button>
@@ -2630,26 +2630,26 @@ export function Admin() {
       {/* Reject Modal */}
       {rejectModal.open && rejectModal.deposit && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full p-6">
             <h3 className="text-lg font-bold text-foreground mb-2">Rejeter le dépôt</h3>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
               Référence : <span className="font-mono">{rejectModal.deposit.reference}</span><br />
               Montant : <strong>{rejectModal.deposit.amount.toLocaleString()} FCFA</strong>
             </p>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Raison du rejet (optionnel)
             </label>
             <textarea
               value={rejectModal.reason}
               onChange={e => setRejectModal({ ...rejectModal, reason: e.target.value })}
               placeholder="Ex: Montant non reçu, référence invalide..."
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               rows={3}
             />
             <div className="flex items-center justify-end gap-2 mt-4">
               <button
                 onClick={() => setRejectModal({ open: false, deposit: null, reason: "" })}
-                className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50"
               >
                 Annuler
               </button>
@@ -2672,7 +2672,7 @@ export function Admin() {
           className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
           onClick={() => setSuspendModal(s => ({ ...s, open: false }))}
         >
-          <div className="bg-white rounded-xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-slate-900 rounded-xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
                 <Ban className="w-6 h-6 text-red-600" />
@@ -2718,7 +2718,7 @@ export function Admin() {
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => setSuspendModal(s => ({ ...s, open: false }))}
-                className="flex-1 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50"
               >
                 Annuler
               </button>
@@ -2736,9 +2736,9 @@ export function Admin() {
       {/* ⬇️ NOUVEAU : Modal Coordonnées de Dépôt */}
       {coordsModal.open && coordsModal.deposit && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full p-6">
             <h3 className="text-lg font-bold text-foreground mb-1">Coordonnées de paiement</h3>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
               Dépôt de <strong>{coordsModal.deposit.amount.toLocaleString()} FCFA</strong>{" "}
               via {coordsModal.deposit.method}
               {coordsModal.deposit.phone && ` (${coordsModal.deposit.phone})`}
@@ -2746,7 +2746,7 @@ export function Admin() {
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-gray-700 block mb-1">
+                <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">
                   Label <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -2754,11 +2754,11 @@ export function Admin() {
                   value={coordsModal.label}
                   onChange={(e) => setCoordsModal({ ...coordsModal, label: e.target.value })}
                   placeholder="Ex: Numéro MTN MoMo"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-700 block mb-1">
+                <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">
                   Valeur <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -2766,20 +2766,20 @@ export function Admin() {
                   value={coordsModal.value}
                   onChange={(e) => setCoordsModal({ ...coordsModal, value: e.target.value })}
                   placeholder="Ex: +237 6 55 00 11 22"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-700 block mb-1">Instructions</label>
+                <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Instructions</label>
                 <textarea
                   value={coordsModal.instructions}
                   onChange={(e) => setCoordsModal({ ...coordsModal, instructions: e.target.value })}
                   placeholder="Ex: Envoyez 5000 FCFA au numéro ci-dessus en ajoutant votre référence dans le libellé"
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
                 />
               </div>
-              <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+              <p className="text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-slate-800/50 p-2 rounded">
                 ⏱️ Le client aura <strong>10 minutes</strong> pour effectuer le paiement après réception.
               </p>
             </div>
@@ -2787,7 +2787,7 @@ export function Admin() {
             <div className="flex items-center justify-end gap-2 mt-5">
               <button
                 onClick={() => setCoordsModal({ open: false, deposit: null, label: "", value: "", instructions: "" })}
-                className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 dark:bg-slate-800/50"
               >
                 Annuler
               </button>

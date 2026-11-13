@@ -242,7 +242,7 @@ function TransitPage({ type, method, amount, phone, ref_, balance, onConfirmed, 
 
   return (
     <motion.div key="transit" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}>
-      <Card className="bg-white/90 backdrop-blur-sm shadow-2xl overflow-hidden border-teal-200">
+      <Card className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-2xl overflow-hidden border-teal-200">
         {failedReason && (
           <div className="bg-red-50 border-b border-red-200 px-6 py-4">
             <div className="flex items-start gap-3">
@@ -258,7 +258,7 @@ function TransitPage({ type, method, amount, phone, ref_, balance, onConfirmed, 
         {/* Banner */}
         <div className={`px-6 py-5 text-white ${isDeposit ? "bg-gradient-to-r from-emerald-600 to-teal-600" : "bg-gradient-to-r from-blue-600 to-indigo-600"}`}>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-white/20 dark:bg-slate-900/20 rounded-full flex items-center justify-center">
               <Clock className="w-5 h-5" />
             </div>
             <div>
@@ -277,15 +277,15 @@ function TransitPage({ type, method, amount, phone, ref_, balance, onConfirmed, 
               <span>Vérification en cours…</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <Progress value={progress} className="h-2 bg-white/20" />
+            <Progress value={progress} className="h-2 bg-white/20 dark:bg-slate-900/20" />
           </div>
         </div>
 
         <CardContent className="pt-5 space-y-4 pb-6">
           {/* Reference */}
-          <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
+          <div className="flex items-center justify-between bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg px-4 py-3">
             <div>
-              <p className="text-xs text-gray-500 mb-0.5">Référence</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Référence</p>
               <p className="font-mono font-bold text-teal-800 tracking-wider">{ref_}</p>
             </div>
             <Button variant="ghost" size="sm" onClick={() => copyToClipboard(ref_)} className="gap-1 text-teal-600">
@@ -308,7 +308,7 @@ function TransitPage({ type, method, amount, phone, ref_, balance, onConfirmed, 
 
           {/* AYO coordinates */}
           <div>
-            <h4 className="font-semibold text-gray-800 flex items-center gap-2 mb-2">
+            <h4 className="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2 mb-2">
               <ShieldCheck className="w-4 h-4 text-teal-600" />
               {isDeposit ? "Coordonnées AYO (envoyez ici)" : "Détails du paiement sortant"}
             </h4>
@@ -318,8 +318,8 @@ function TransitPage({ type, method, amount, phone, ref_, balance, onConfirmed, 
                   <coord.Icon className="w-4 h-4 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-500">{coord.label}</p>
-                  <p className="font-mono font-bold text-gray-900 text-sm truncate">{coord.value}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{coord.label}</p>
+                  <p className="font-mono font-bold text-gray-900 dark:text-gray-100 text-sm truncate">{coord.value}</p>
                 </div>
                 {isDeposit && (
                   <Button variant="ghost" size="sm" onClick={() => copyToClipboard(coord.value)} className="text-teal-600 shrink-0">
@@ -327,8 +327,8 @@ function TransitPage({ type, method, amount, phone, ref_, balance, onConfirmed, 
                   </Button>
                 )}
               </div>
-              <div className="px-4 py-2.5 border-t border-teal-100 bg-white">
-                <p className="text-xs text-gray-600">{coord.instruction}</p>
+              <div className="px-4 py-2.5 border-t border-teal-100 bg-white dark:bg-slate-900">
+                <p className="text-xs text-gray-600 dark:text-gray-400">{coord.instruction}</p>
               </div>
             </div>
           </div>
@@ -343,9 +343,9 @@ function TransitPage({ type, method, amount, phone, ref_, balance, onConfirmed, 
               { label: isDeposit ? "Crédité sur votre compte" : "Reçu sur votre compte externe", value: `${amount.toLocaleString()} FCFA` },
               { label: "Nouveau solde estimé", value: `${newBalance.toLocaleString()} FCFA` },
             ].map((row) => (
-              <div key={row.label} className="bg-gray-50 rounded-lg p-2.5">
-                <p className="text-xs text-gray-500 mb-0.5">{row.label}</p>
-                <p className="font-semibold text-gray-800 text-xs">{row.value}</p>
+              <div key={row.label} className="bg-gray-50 dark:bg-slate-800/50 rounded-lg p-2.5">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">{row.label}</p>
+                <p className="font-semibold text-gray-800 dark:text-gray-200 text-xs">{row.value}</p>
               </div>
             ))}
           </div>
@@ -411,17 +411,17 @@ function SuccessPage({ type, method, amount, ref_, newBalance, onReset }: Succes
   }, [isDeposit]);
   return (
     <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45, type: "spring", stiffness: 200 }}>
-      <Card className="bg-white/85 backdrop-blur-sm shadow-xl border-green-200 text-center">
+      <Card className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm shadow-xl border-green-200 text-center">
         <CardContent className="pt-10 pb-8 space-y-5">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.1 }}
             className={`w-20 h-20 ${isDeposit ? "bg-green-100" : "bg-blue-100"} rounded-full flex items-center justify-center mx-auto`}>
             <CheckCircle2 className={`w-10 h-10 ${isDeposit ? "text-green-600" : "text-blue-600"}`} />
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-            <h3 className="text-2xl font-bold text-gray-900">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {isDeposit ? "Dépôt confirmé !" : "Retrait effectué !"}
             </h3>
-            <p className="text-gray-500 mt-1">
+            <p className="text-gray-500 dark:text-gray-400 mt-1">
               {isDeposit
                 ? "Paiement reçu et confirmé par AYO. Votre solde a été crédité."
                 : "Votre demande a été traitée. Les fonds sont en route vers votre compte."}
@@ -429,7 +429,7 @@ function SuccessPage({ type, method, amount, ref_, newBalance, onReset }: Succes
           </motion.div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
-            className="bg-gray-50 rounded-xl p-4 text-sm space-y-2.5 text-left">
+            className="bg-gray-50 dark:bg-slate-800/50 rounded-xl p-4 text-sm space-y-2.5 text-left">
             {[
               { label: "Référence", value: ref_, mono: true },
               { label: "Service", value: `${method.icon} ${method.name}` },
@@ -437,8 +437,8 @@ function SuccessPage({ type, method, amount, ref_, newBalance, onReset }: Succes
               { label: "Nouveau solde", value: `${newBalance.toLocaleString()} FCFA`, color: "text-teal-700 font-semibold" },
             ].map((row) => (
               <div key={row.label} className="flex justify-between">
-                <span className="text-gray-500">{row.label}</span>
-                <span className={`${row.mono ? "font-mono text-gray-800" : ""} ${row.color ?? "text-gray-800 font-semibold"}`}>{row.value}</span>
+                <span className="text-gray-500 dark:text-gray-400">{row.label}</span>
+                <span className={`${row.mono ? "font-mono text-gray-800 dark:text-gray-200" : ""} ${row.color ?? "text-gray-800 dark:text-gray-200 font-semibold"}`}>{row.value}</span>
               </div>
             ))}
           </motion.div>
@@ -458,16 +458,16 @@ function FailurePage({ type, method, amount, ref_, reason, onReset }: any) {
   const isDeposit = type === "deposit";
   return (
     <motion.div key="failed" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45, type: "spring", stiffness: 200 }}>
-      <Card className="bg-white/85 backdrop-blur-sm shadow-xl border-red-200 text-center">
+      <Card className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm shadow-xl border-red-200 text-center">
         <CardContent className="pt-10 pb-8 space-y-5">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.1 }} className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto">
             <XCircle className="w-10 h-10 text-red-600" />
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-            <h3 className="text-2xl font-bold text-gray-900">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {isDeposit ? "Dépôt rejeté" : "Retrait rejeté"}
             </h3>
-            <p className="text-gray-500 mt-1">Référence : {ref_}</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">Référence : {ref_}</p>
             <div className="bg-red-50 border border-red-100 rounded-xl p-4 mt-4 text-sm text-red-800">
               <strong>Raison :</strong> {reason}
             </div>
@@ -840,8 +840,8 @@ const handleResumeWithdrawal = () => {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="max-w-4xl mx-auto space-y-6">
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-        <h2 className="text-2xl font-semibold text-gray-900">Mon portefeuille</h2>
-        <p className="text-gray-600 mt-1">Gérez votre solde et effectuez des opérations</p>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Mon portefeuille</h2>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">Gérez votre solde et effectuez des opérations</p>
       </motion.div>
 
       {/* Balance Card */}
@@ -856,15 +856,15 @@ const handleResumeWithdrawal = () => {
           </CardHeader>
           <CardContent>
             <div className="flex gap-3">
-              <div className="flex-1 bg-white/20 backdrop-blur-sm rounded-lg p-3">
+              <div className="flex-1 bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm rounded-lg p-3">
                 <p className="text-xs text-teal-100">Reçu</p>
                 <p className="text-lg font-semibold">+{stats.totalReceived.toLocaleString()} FCFA</p>
               </div>
-              <div className="flex-1 bg-white/20 backdrop-blur-sm rounded-lg p-3">
+              <div className="flex-1 bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm rounded-lg p-3">
                 <p className="text-xs text-teal-100">Dépôts</p>
                 <p className="text-lg font-semibold">{stats.countDeposits}</p>
               </div>
-              <div className="flex-1 bg-white/20 backdrop-blur-sm rounded-lg p-3">
+              <div className="flex-1 bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm rounded-lg p-3">
                 <p className="text-xs text-teal-100">Retraits</p>
                 <p className="text-lg font-semibold">{stats.countWithdrawals}</p>
               </div>
@@ -875,7 +875,7 @@ const handleResumeWithdrawal = () => {
 
       {/* Tabs */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
-        <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-teal-100">
+        <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg border-teal-100">
           <CardContent className="pt-6">
             <Tabs
   defaultValue={
@@ -935,7 +935,7 @@ const handleResumeWithdrawal = () => {
                     <motion.div key="deposit-form" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
                       <div className="mb-4">
                         <h3 className="font-semibold text-lg mb-0.5">Recharger votre compte</h3>
-                        <p className="text-sm text-gray-600">Ajoutez des fonds à votre portefeuille AYO</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Ajoutez des fonds à votre portefeuille AYO</p>
                       </div>
 
                       <form onSubmit={handleDeposit} className="space-y-4">
@@ -951,14 +951,14 @@ const handleResumeWithdrawal = () => {
                                 className={`flex items-center gap-2 p-2.5 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
                                   depositForm.method === m.id
                                     ? "border-teal-500 bg-teal-50 scale-[1.02] shadow-sm"
-                                    : "border-gray-200 bg-white hover:border-teal-300 hover:scale-[1.02] active:scale-[0.98]"
+                                    : "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-teal-300 hover:scale-[1.02] active:scale-[0.98]"
                                 }`}
                               >
                                 <div className={`w-9 h-9 ${m.color}/10 rounded-lg flex items-center justify-center shrink-0 p-1.5`}>
                                   <ServiceLogo name={m.id} fallbackIcon={m.icon} className="w-full h-full object-contain" />
                                 </div>
                                 <div className="min-w-0">
-                                  <p className="text-xs font-semibold text-gray-800 truncate">{m.name}</p>
+                                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate">{m.name}</p>
                                   {m.fee > 0 && <p className="text-[10px] text-gray-400">+{(m.fee * 100).toFixed(1)}% frais</p>}
                                   {m.fee === 0 && <p className="text-[10px] text-emerald-600 font-medium">0% frais</p>}
                                 </div>
@@ -971,7 +971,7 @@ const handleResumeWithdrawal = () => {
                           <Label htmlFor="deposit-amount">Montant (FCFA)</Label>
                           <Input id="deposit-amount" type="number" placeholder="Ex: 50 000" min="1000"
                             value={depositForm.amount} onChange={(e) => setDepositForm({ ...depositForm, amount: e.target.value })} required />
-                          <p className="text-xs text-gray-500">Minimum : 1 000 FCFA</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">Minimum : 1 000 FCFA</p>
                         </div>
 
                         <div className="space-y-2">
@@ -997,12 +997,12 @@ const handleResumeWithdrawal = () => {
                         {/* Summary */}
                         <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200 space-y-1.5">
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Montant à déposer</span>
+                            <span className="text-gray-600 dark:text-gray-400">Montant à déposer</span>
                             <span className="font-medium">{depositForm.amount ? Number(depositForm.amount).toLocaleString() : "0"} FCFA</span>
                           </div>
                           {depositFee > 0 && (
                             <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Frais ({depositMethod ? (depositMethod.fee * 100).toFixed(1) : 0}%)</span>
+                              <span className="text-gray-600 dark:text-gray-400">Frais ({depositMethod ? (depositMethod.fee * 100).toFixed(1) : 0}%)</span>
                               <span className="font-medium">{depositFee.toLocaleString()} FCFA</span>
                             </div>
                           )}
@@ -1027,10 +1027,10 @@ const handleResumeWithdrawal = () => {
       <CardContent className="pt-6 text-center">
         <Loader2 className="w-10 h-10 mx-auto mb-3 animate-spin text-teal-600" />
         <h3 className="text-lg font-semibold mb-1">En attente de l'admin</h3>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Votre demande de dépôt de <strong>{Number(depositForm.amount).toLocaleString()} FCFA</strong> a été envoyée.
         </p>
-        <p className="text-xs text-gray-500 mt-2">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
           L'admin va vous communiquer les coordonnées de paiement. Restez sur cette page.
         </p>
       </CardContent>
@@ -1056,7 +1056,7 @@ const handleResumeWithdrawal = () => {
       </CardHeader>
       <CardContent className="space-y-3">
         <div>
-          <p className="text-xs text-gray-500 mb-1">{depositCoords.label}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{depositCoords.label}</p>
           <div className="flex items-center gap-2">
             <p className="text-lg font-mono font-semibold">{depositCoords.value}</p>
             <Button
@@ -1072,7 +1072,7 @@ const handleResumeWithdrawal = () => {
           </div>
         </div>
         {depositCoords.instructions && (
-          <p className="text-sm text-gray-700 bg-white p-3 rounded border">
+          <p className="text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-900 p-3 rounded border">
             {depositCoords.instructions}
           </p>
         )}
@@ -1121,7 +1121,7 @@ const handleResumeWithdrawal = () => {
     <CardContent className="pt-6 text-center">
       <Clock className="w-10 h-10 mx-auto mb-3 text-orange-500" />
       <h3 className="text-lg font-semibold mb-1">En attente de validation</h3>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
         Votre dépôt de <strong>{Number(depositForm.amount).toLocaleString()} FCFA</strong> est en cours de vérification par l'admin.
       </p>
       <Badge variant="secondary">Référence: {depositRef}</Badge>
@@ -1219,7 +1219,7 @@ const handleResumeWithdrawal = () => {
                     <motion.div key="withdraw-form" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
                       <div className="mb-4">
                         <h3 className="font-semibold text-lg mb-0.5">Retirer vos fonds</h3>
-                        <p className="text-sm text-gray-600">Transférez de l'argent vers votre compte externe</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Transférez de l'argent vers votre compte externe</p>
                       </div>
 
                       <form onSubmit={handleWithdrawal} className="space-y-4">
@@ -1235,14 +1235,14 @@ const handleResumeWithdrawal = () => {
                                 className={`flex items-center gap-2 p-2.5 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
                                   withdrawForm.method === m.id
                                     ? "border-blue-500 bg-blue-50 scale-[1.02] shadow-sm"
-                                    : "border-gray-200 bg-white hover:border-blue-300 hover:scale-[1.02] active:scale-[0.98]"
+                                    : "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-300 hover:scale-[1.02] active:scale-[0.98]"
                                 }`}
                               >
                                 <div className={`w-9 h-9 ${m.color}/10 rounded-lg flex items-center justify-center shrink-0 p-1.5`}>
                                   <ServiceLogo name={m.id} fallbackIcon={m.icon} className="w-full h-full object-contain" />
                                 </div>
                                 <div className="min-w-0">
-                                  <p className="text-xs font-semibold text-gray-800 truncate">{m.name}</p>
+                                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate">{m.name}</p>
                                   <p className="text-[10px] text-gray-400">{(m.fee * 100).toFixed(1)}% frais</p>
                                 </div>
                               </button>
@@ -1254,7 +1254,7 @@ const handleResumeWithdrawal = () => {
                           <Label htmlFor="withdraw-amount">Montant (FCFA)</Label>
                           <Input id="withdraw-amount" type="number" placeholder="Ex: 30 000" min="1000" max={balance}
                             value={withdrawForm.amount} onChange={(e) => setWithdrawForm({ ...withdrawForm, amount: e.target.value })} required />
-                          <p className="text-xs text-gray-500">Disponible : {balance.toLocaleString()} FCFA</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">Disponible : {balance.toLocaleString()} FCFA</p>
                         </div>
 
                         <div className="space-y-2">
@@ -1280,11 +1280,11 @@ const handleResumeWithdrawal = () => {
                         {/* Summary */}
                         <div className="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-1.5">
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Montant retiré</span>
+                            <span className="text-gray-600 dark:text-gray-400">Montant retiré</span>
                             <span className="font-medium">{withdrawForm.amount ? Number(withdrawForm.amount).toLocaleString() : "0"} FCFA</span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Frais ({withdrawMethod ? (withdrawMethod.fee * 100).toFixed(1) : 0}%)</span>
+                            <span className="text-gray-600 dark:text-gray-400">Frais ({withdrawMethod ? (withdrawMethod.fee * 100).toFixed(1) : 0}%)</span>
                             <span className="font-medium">{withdrawFee.toLocaleString()} FCFA</span>
                           </div>
                           <div className="border-t border-blue-200 pt-1.5 flex justify-between">
@@ -1338,7 +1338,7 @@ const handleResumeWithdrawal = () => {
 
       {/* Recent Operations */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
-        <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-teal-100">
+        <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg border-teal-100">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -1359,12 +1359,12 @@ const handleResumeWithdrawal = () => {
               <div className="space-y-3">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 animate-pulse">
-                    <div className="w-10 h-10 rounded-full bg-gray-200" />
+                    <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-slate-700" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-4 w-40 bg-gray-200 rounded" />
-                      <div className="h-3 w-24 bg-gray-200 rounded" />
+                      <div className="h-4 w-40 bg-gray-200 dark:bg-slate-700 rounded" />
+                      <div className="h-3 w-24 bg-gray-200 dark:bg-slate-700 rounded" />
                     </div>
-                    <div className="h-4 w-20 bg-gray-200 rounded" />
+                    <div className="h-4 w-20 bg-gray-200 dark:bg-slate-700 rounded" />
                   </div>
                 ))}
               </div>
@@ -1373,8 +1373,8 @@ const handleResumeWithdrawal = () => {
                 <div className="w-16 h-16 rounded-full bg-teal-50 flex items-center justify-center mb-3">
                   <Inbox className="w-8 h-8 text-teal-400" />
                 </div>
-                <p className="text-sm font-medium text-gray-700 mb-1">Aucune opération récente</p>
-                <p className="text-xs text-gray-500 mb-4">Vos dépôts et retraits apparaîtront ici</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Aucune opération récente</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Vos dépôts et retraits apparaîtront ici</p>
                 <Link to="/history">
                   <Button size="sm" variant="outline">
                     Voir l'historique complet
@@ -1384,14 +1384,14 @@ const handleResumeWithdrawal = () => {
             ) : (
               <div className="space-y-3">
                 {recentOps.map((op) => (
-                  <div key={op.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <div key={op.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-slate-800/50 hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 transition-colors">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div className={`w-10 h-10 ${op.iconBg} rounded-full flex items-center justify-center flex-shrink-0`}>
                         <op.Icon className="w-5 h-5 text-white" />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-medium text-gray-900 truncate">{op.label}</p>
-                        <p className="text-xs text-gray-500">{op.date}</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{op.label}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{op.date}</p>
                       </div>
                     </div>
                     <div className="text-right ml-3 flex-shrink-0">

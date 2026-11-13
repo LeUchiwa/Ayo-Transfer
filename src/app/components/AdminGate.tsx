@@ -63,7 +63,7 @@ export function AdminGate({ children }: AdminGateProps) {
         ))}
       </div>
 
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl p-8 relative">
+      <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-8 relative">
         <div className="flex justify-center mb-6">
           <ImageWithFallback src={ayoLogo} alt="AYO" className="h-14 w-auto object-contain" />
         </div>
@@ -73,14 +73,14 @@ export function AdminGate({ children }: AdminGateProps) {
           <h1 className="text-xl font-bold text-foreground">Espace Administrateur</h1>
         </div>
 
-        <p className="text-center text-xs text-gray-500 mb-6">
+        <p className="text-center text-xs text-gray-500 dark:text-gray-400 mb-6">
           Authentification renforcée requise
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* ID Admin */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Identifiant admin
             </label>
             <div className="relative">
@@ -90,7 +90,7 @@ export function AdminGate({ children }: AdminGateProps) {
                 value={id}
                 onChange={(e) => setId(e.target.value)}
                 placeholder="AYO-ADMIN"
-                className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full pl-9 pr-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 required
                 autoFocus
                 disabled={isSubmitting}
@@ -100,7 +100,7 @@ export function AdminGate({ children }: AdminGateProps) {
 
           {/* Mot de passe */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Mot de passe
             </label>
             <div className="relative">
@@ -110,14 +110,14 @@ export function AdminGate({ children }: AdminGateProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full pl-9 pr-10 py-2.5 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 required
                 disabled={isSubmitting}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-400"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

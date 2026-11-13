@@ -58,7 +58,7 @@ function iconFor(n: ApiNotification) {
       if (n.status === "rejected") return { Icon: ShieldX, color: "text-red-600" };
       return { Icon: Clock, color: "text-orange-600" };
     default:
-      return { Icon: Bell, color: "text-gray-600" };
+      return { Icon: Bell, color: "text-gray-600 dark:text-gray-400" };
   }
 }
 
@@ -184,21 +184,21 @@ export function Notifications() {
         className={`p-4 rounded-lg border transition-all duration-200 cursor-pointer ${
           isUnread
             ? "bg-orange-50 border-orange-200 hover:bg-orange-100 hover:shadow-md"
-            : "bg-white border-gray-200 hover:border-gray-300 hover:shadow-md"
+            : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 hover:border-gray-300 hover:shadow-md"
         }`}
         onClick={() => markAsRead(n.id)}
       >
         <div className="flex items-start gap-3">
-          <div className={`p-2 rounded-full bg-gray-100 ${color}`}>
+          <div className={`p-2 rounded-full bg-gray-100 dark:bg-slate-800 ${color}`}>
             <Icon className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2 mb-1">
-              <h4 className="font-semibold text-gray-900">{n.title}</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100">{n.title}</h4>
               {isUnread && <Badge className="bg-orange-500 shrink-0">Nouveau</Badge>}
             </div>
-            <p className="text-sm text-gray-600 mb-1">{n.message}</p>
-            <p className="text-xs text-gray-500">{timeAgo(n.createdAt)}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{n.message}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{timeAgo(n.createdAt)}</p>
           </div>
         </div>
       </div>
@@ -209,8 +209,8 @@ export function Notifications() {
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">Notifications</h2>
-          <p className="text-gray-600 mt-1">Gérez vos notifications et messages</p>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Notifications</h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Gérez vos notifications et messages</p>
           {lastUpdated && (
             <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -255,7 +255,7 @@ export function Notifications() {
         </div>
       </div>
 
-      <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-orange-100">
+      <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg border-orange-100">
         <CardContent className="pt-6">
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="grid w-full grid-cols-1">
@@ -270,7 +270,7 @@ export function Notifications() {
 
             <TabsContent value="all" className="mt-6 space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-semibold text-gray-900">Toutes les notifications</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Toutes les notifications</h3>
                 {unreadCount > 0 && (
                   <Button variant="ghost" size="sm" onClick={markAllAsRead}>
                     <CheckCheck className="w-4 h-4 mr-1" />
@@ -302,10 +302,10 @@ export function Notifications() {
                   <div className="w-20 h-20 rounded-full bg-orange-50 flex items-center justify-center mb-4">
                     <Inbox className="w-10 h-10 text-orange-400" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
                     Aucune notification
                   </h3>
-                  <p className="text-sm text-gray-500 mb-6 max-w-sm">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-sm">
                     Vos dépôts, retraits, transferts et vérifications d'identité apparaîtront ici.
                   </p>
                   <div className="flex gap-2">

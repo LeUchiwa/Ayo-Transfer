@@ -154,13 +154,13 @@ export function History() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-        <h2 className="text-2xl font-semibold text-gray-900">Historique des transactions</h2>
-        <p className="text-gray-600 mt-1">Consultez toutes vos opérations</p>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Historique des transactions</h2>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">Consultez toutes vos opérations</p>
       </motion.div>
 
       {/* Filters */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-        <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-orange-100">
+        <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg border-orange-100">
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
@@ -202,7 +202,7 @@ export function History() {
 
       {/* Transactions List */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
-        <Card className="bg-white/80 backdrop-blur-sm shadow-lg border-orange-100">
+        <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg border-orange-100">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -242,7 +242,7 @@ export function History() {
             )}
 
             {!loading && !error && transactions.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+              <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
                 <Inbox className="w-10 h-10 mb-2 opacity-40" />
                 <p className="text-sm">
                   {hasFilters
@@ -266,7 +266,7 @@ export function History() {
               <>
                 <div className="space-y-4">
                   {transactions.map((t) => (
-                    <div key={t.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-lg gap-4 transition-colors duration-200">
+                    <div key={t.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-gray-50 dark:bg-slate-800/50 hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg gap-4 transition-colors duration-200">
                       <div className="flex items-center gap-3 flex-1">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${t.direction === "sent" ? "bg-red-100" : "bg-green-100"}`}>
                           {t.direction === "sent" ? (
@@ -276,11 +276,11 @@ export function History() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">
+                          <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
                             {t.label}
-                            {t.counterpart !== "—" && <span className="text-gray-500 font-normal"> · {t.counterpart}</span>}
+                            {t.counterpart !== "—" && <span className="text-gray-500 dark:text-gray-400 font-normal"> · {t.counterpart}</span>}
                           </p>
-                          <p className="text-sm text-gray-500">{t.method}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{t.method}</p>
                           {t.note && <p className="text-xs text-gray-400 mt-1">Note: {t.note}</p>}
                         </div>
                       </div>
@@ -290,7 +290,7 @@ export function History() {
                           <p className={`font-semibold ${t.direction === "sent" ? "text-red-600" : "text-green-600"}`}>
                             {t.direction === "sent" ? "-" : "+"}{t.amount.toLocaleString()} FCFA
                           </p>
-                          <p className="text-sm text-gray-500">{formatDate(t.date)}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(t.date)}</p>
                         </div>
                         <div>{getStatusBadge(t.status)}</div>
                       </div>

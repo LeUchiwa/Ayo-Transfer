@@ -29,6 +29,7 @@ import { Badge } from "./ui/badge";
 import ayoLogo from "@/imports/AYO.png";
 import { useUnreadNotificationsCount } from "../hooks/useUnreadNotificationsCount";
 import { usePendingTransactionsCount } from "../hooks/usePendingTransactionsCount";
+import { ThemeToggle } from "./ThemeToggle";
 import { PWAInstallMenuItem } from "./PWAInstallMenuItem";
 
 export function ProtectedLayout() {
@@ -70,7 +71,7 @@ export function ProtectedLayout() {
       <div className="min-h-screen relative">
         <StaticBackground />
         {/* Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-teal-100 sticky top-0 z-10 shadow-sm">
+        <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-teal-100 sticky top-0 z-10 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               {/* Logo AYO */}
@@ -102,6 +103,7 @@ export function ProtectedLayout() {
                 ))}
 
                 {/* ✅ Avatar amélioré */}
+                <ThemeToggle />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="rounded-full gap-2 px-3">
@@ -118,7 +120,7 @@ export function ProtectedLayout() {
                     <DropdownMenuLabel>
                       <div className="flex flex-col">
                         <span className="font-medium">{user?.name}</span>
-                        <span className="text-xs text-gray-500 font-normal truncate">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 font-normal truncate">
                           {user?.email}
                         </span>
                       </div>
@@ -157,7 +159,7 @@ export function ProtectedLayout() {
                     <DropdownMenuLabel>
                       <div className="flex flex-col">
                         <span className="font-medium">{user?.name}</span>
-                        <span className="text-xs text-gray-500 font-normal truncate">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 font-normal truncate">
                           {user?.email}
                         </span>
                       </div>

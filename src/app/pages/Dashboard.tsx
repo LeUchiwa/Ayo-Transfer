@@ -85,8 +85,8 @@ export function Dashboard() {
       >
         <Card className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-cyan-600 border-0 text-white shadow-2xl">
           {/* Cercles décoratifs */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-slate-900/10 rounded-full -translate-y-32 translate-x-32" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 dark:bg-slate-900/5 rounded-full translate-y-24 -translate-x-24" />
 
           <CardHeader className="relative">
             <div className="flex items-center justify-between">
@@ -103,7 +103,7 @@ export function Dashboard() {
             </div>
             <CardTitle className="text-4xl sm:text-5xl font-bold mt-2">
               {isLoading ? (
-  <Skeleton className="h-12 w-48 bg-white/20" />
+  <Skeleton className="h-12 w-48 bg-white/20 dark:bg-slate-900/20" />
 ) : (
   <>
                   {showBalance ? stats.balance.toLocaleString() : "•••••••"}
@@ -116,13 +116,13 @@ export function Dashboard() {
           <CardContent className="relative">
             <div className="flex flex-wrap gap-3">
               <Link to="/transfer">
-                <Button className="bg-white text-primary hover:bg-white/90 border-0 font-semibold shadow-lg">
+                <Button className="bg-white dark:bg-slate-900 text-primary hover:bg-white/90 dark:bg-slate-900/90 border-0 font-semibold shadow-lg">
                   <Send className="w-4 h-4 mr-2" />
                   Envoyer
                 </Button>
               </Link>
               <Link to="/wallet">
-                <Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm">
+                <Button variant="outline" className="bg-white/10 dark:bg-slate-900/10 text-white border-white/30 hover:bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm">
                   <Plus className="w-4 h-4 mr-2" />
                   Déposer
                 </Button>
@@ -140,7 +140,7 @@ export function Dashboard() {
         className="grid grid-cols-2 md:grid-cols-5 gap-3"
       >
         <Link to="/transfer">
-          <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
+          <Card className="bg-white dark:bg-slate-900 hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
             <CardContent className="p-4 flex flex-col items-center text-center gap-2">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Send className="w-6 h-6 text-primary" />
@@ -151,7 +151,7 @@ export function Dashboard() {
         </Link>
         
         <button onClick={() => setShowReceiveModal(true)} className="w-full text-left">
-          <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
+          <Card className="bg-white dark:bg-slate-900 hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
             <CardContent className="p-4 flex flex-col items-center text-center gap-2">
               <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center">
                 <QrCode className="w-6 h-6 text-teal-600" />
@@ -162,7 +162,7 @@ export function Dashboard() {
         </button>
 
 <Link to="/wallet?tab=deposit">
-  <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
+  <Card className="bg-white dark:bg-slate-900 hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
     <CardContent className="p-4 flex flex-col items-center text-center gap-2">
       <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center">
         <Plus className="w-6 h-6 text-emerald-600" />
@@ -173,7 +173,7 @@ export function Dashboard() {
 </Link>
 
         <Link to="/wallet?tab=withdraw">
-          <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
+          <Card className="bg-white dark:bg-slate-900 hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
             <CardContent className="p-4 flex flex-col items-center text-center gap-2">
               <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">
                 <ArrowDownRight className="w-6 h-6 text-amber-600" />
@@ -184,7 +184,7 @@ export function Dashboard() {
         </Link>
 
         <Link to="/history">
-          <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
+          <Card className="bg-white dark:bg-slate-900 hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
             <CardContent className="p-4 flex flex-col items-center text-center gap-2">
               <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
                 <History className="w-6 h-6 text-blue-600" />
@@ -202,7 +202,7 @@ export function Dashboard() {
         transition={{ duration: 0.5, delay: 0.3 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
-        <Card className="bg-white shadow-sm border-border/50 hover:shadow-md transition-shadow">
+        <Card className="bg-white dark:bg-slate-900 shadow-sm border-border/50 hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total envoyé
@@ -221,7 +221,7 @@ export function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border-border/50 hover:shadow-md transition-shadow">
+        <Card className="bg-white dark:bg-slate-900 shadow-sm border-border/50 hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total reçu
@@ -240,7 +240,7 @@ export function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border-border/50 hover:shadow-md transition-shadow">
+        <Card className="bg-white dark:bg-slate-900 shadow-sm border-border/50 hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total dépôts
@@ -268,7 +268,7 @@ export function Dashboard() {
           transition={{ duration: 0.5, delay: 0.35 }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-4"
         >
-          <Card className="bg-white shadow-sm border-border/50">
+          <Card className="bg-white dark:bg-slate-900 shadow-sm border-border/50">
             <CardHeader>
               <CardTitle className="text-lg">Activité</CardTitle>
               <CardDescription>Entrées et sorties sur la période</CardDescription>
@@ -278,7 +278,7 @@ export function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white shadow-sm border-border/50">
+          <Card className="bg-white dark:bg-slate-900 shadow-sm border-border/50">
             <CardHeader>
               <CardTitle className="text-lg">Répartition</CardTitle>
               <CardDescription>Par type d'opération</CardDescription>
@@ -296,7 +296,7 @@ export function Dashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
       >
-        <Card className="bg-white shadow-sm border-border/50">
+        <Card className="bg-white dark:bg-slate-900 shadow-sm border-border/50">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>

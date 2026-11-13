@@ -44,19 +44,19 @@ export function ReceiveMoneyModal({ isOpen, onClose, userId, userName }: Props) 
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
         
         <div className="flex items-center justify-between mb-6">
-          <h3 className="font-bold text-xl text-gray-900">Recevoir de l'argent</h3>
-          <button onClick={onClose} className="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200">
+          <h3 className="font-bold text-xl text-gray-900 dark:text-gray-100">Recevoir de l'argent</h3>
+          <button onClick={onClose} className="p-2 bg-gray-100 dark:bg-slate-800 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:bg-slate-700">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="text-center mb-6">
-          <p className="text-sm text-gray-500 mb-4">Faites scanner ce code à votre client pour être payé instantanément.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Faites scanner ce code à votre client pour être payé instantanément.</p>
           
-          <div className="bg-white p-4 rounded-2xl border-2 border-teal-100 inline-block shadow-sm">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border-2 border-teal-100 inline-block shadow-sm">
             <QRCodeSVG 
               value={payUrl} 
               size={200}
@@ -67,21 +67,21 @@ export function ReceiveMoneyModal({ isOpen, onClose, userId, userName }: Props) 
             />
           </div>
           
-          <p className="font-semibold text-gray-900 mt-4">{userName}</p>
+          <p className="font-semibold text-gray-900 dark:text-gray-100 mt-4">{userName}</p>
           <p className="text-xs text-teal-600 font-medium">Compte vérifié AYO</p>
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-200">
+          <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-slate-700">
             <input 
               type="text" 
               readOnly 
               value={payUrl} 
-              className="flex-1 bg-transparent text-xs text-gray-600 outline-none truncate"
+              className="flex-1 bg-transparent text-xs text-gray-600 dark:text-gray-400 outline-none truncate"
             />
             <button 
               onClick={handleCopy}
-              className="p-2 bg-white rounded-lg shadow-sm text-teal-600 hover:text-teal-700"
+              className="p-2 bg-white dark:bg-slate-900 rounded-lg shadow-sm text-teal-600 hover:text-teal-700"
             >
               {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
             </button>

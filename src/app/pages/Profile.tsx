@@ -288,12 +288,12 @@ export function Profile() {
         <Card className="mt-6 border-teal-100 shadow-sm">
           <CardContent className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-full ${hasPin ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-500"}`}>
+              <div className={`p-2 rounded-full ${hasPin ? "bg-green-100 text-green-600" : "bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400"}`}>
                 <Lock className="w-5 h-5" />
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Code PIN de sécurité</p>
-                <p className="text-sm text-gray-500">{hasPin ? "Activé" : "Non configuré (recommandé)"}</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">Code PIN de sécurité</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{hasPin ? "Activé" : "Non configuré (recommandé)"}</p>
               </div>
             </div>
             <Button onClick={() => setShowPinModal(true)} variant={hasPin ? "outline" : "default"} className={!hasPin ? "bg-teal-600 text-white" : ""}>

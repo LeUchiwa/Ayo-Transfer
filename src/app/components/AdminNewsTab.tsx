@@ -109,10 +109,10 @@ export function AdminNewsTab() {
         </Card>
       )}
 
-      {loading && <div className="text-center py-6 text-gray-500">Chargement…</div>}
+      {loading && <div className="text-center py-6 text-gray-500 dark:text-gray-400">Chargement…</div>}
 
       {!loading && items.length === 0 && !showForm && (
-        <Card><CardContent className="py-10 text-center text-gray-500">
+        <Card><CardContent className="py-10 text-center text-gray-500 dark:text-gray-400">
           Aucune actualité publiée. Cliquez sur « Nouvelle actualité » pour commencer.
         </CardContent></Card>
       )}
@@ -122,7 +122,7 @@ export function AdminNewsTab() {
           <Card key={n.id}><CardContent className="p-4 flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate">{n.title}</p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 {n.source} · {n.category} · {n.region} · {new Date(n.publishedAt).toLocaleDateString("fr-FR")}
               </p>
             </div>

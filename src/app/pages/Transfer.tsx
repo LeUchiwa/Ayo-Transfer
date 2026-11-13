@@ -198,7 +198,7 @@ export function Transfer() {
       <AnimatePresence mode="wait">
         {step === "form" && (
           <motion.div key="form" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-            <Card className="bg-white shadow-xl border-border">
+            <Card className="bg-white dark:bg-slate-900 shadow-xl border-border">
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -373,7 +373,7 @@ export function Transfer() {
 
         {step === "success" && (
           <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-            <Card className="bg-white shadow-xl border-green-200 text-center">
+            <Card className="bg-white dark:bg-slate-900 shadow-xl border-green-200 text-center">
               <CardContent className="pt-10 pb-8 space-y-5">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.1 }}

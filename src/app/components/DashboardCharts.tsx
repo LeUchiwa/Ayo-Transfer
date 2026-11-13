@@ -58,7 +58,7 @@ export function ActivityChart({ transactions }: { transactions: any[] }) {
   const empty = data.every((d) => d.entrees === 0 && d.sorties === 0);
 
   return (
-    <Card className="bg-white shadow-sm border-border/50">
+    <Card className="bg-white dark:bg-slate-900 shadow-sm border-border/50">
       <CardHeader>
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
@@ -135,7 +135,7 @@ export function BreakdownChart({ transactions }: { transactions: any[] }) {
   }, [transactions]);
 
   return (
-    <Card className="bg-white shadow-sm border-border/50">
+    <Card className="bg-white dark:bg-slate-900 shadow-sm border-border/50">
       <CardHeader>
         <CardTitle className="text-lg">Répartition</CardTitle>
         <CardDescription>Distribution par type d'opération</CardDescription>

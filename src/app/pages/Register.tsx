@@ -79,9 +79,9 @@ export function Register() {
     <div className="min-h-screen flex bg-background">
       {/* ─── Côté gauche : Branding AYO ─── */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-primary via-primary to-cyan-600 overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-48 translate-x-48" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full translate-y-40 -translate-x-40" />
-        <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-white/5 rounded-full" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 dark:bg-slate-900/10 rounded-full -translate-y-48 translate-x-48" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 dark:bg-slate-900/5 rounded-full translate-y-40 -translate-x-40" />
+        <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-white/5 dark:bg-slate-900/5 rounded-full" />
 
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           {/* Logo */}
@@ -91,7 +91,7 @@ export function Register() {
             transition={{ duration: 0.5 }}
             className="flex items-center gap-3"
           >
-            <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm flex items-center justify-center">
               <ImageWithFallback src={ayoLogo} alt="AYO" className="h-8 w-auto object-contain" />
             </div>
             <div>
@@ -131,7 +131,7 @@ export function Register() {
                   transition={{ duration: 0.4, delay: 0.4 + i * 0.1 }}
                   className="flex items-start gap-3"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -148,7 +148,7 @@ export function Register() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="bg-white/10 backdrop-blur-sm rounded-xl p-3"
+            className="bg-white/10 dark:bg-slate-900/10 backdrop-blur-sm rounded-xl p-3"
           >
             <div className="text-white">
               <WelcomeRotator />

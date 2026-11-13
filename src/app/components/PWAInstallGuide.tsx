@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 export function PWAInstallGuide({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-t-2xl sm:rounded-2xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start justify-between mb-4">
           <div>
             <h3 className="font-semibold text-lg">Installer AYO sur iPhone</h3>

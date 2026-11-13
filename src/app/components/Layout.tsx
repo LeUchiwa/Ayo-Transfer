@@ -41,7 +41,7 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white border-b border-border sticky top-0 z-10 shadow-sm">
+      <header className="bg-white dark:bg-slate-900 border-b border-border sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export function Layout() {
                   <DropdownMenuLabel>
                     <div className="flex flex-col">
                       <span className="font-medium">{user?.name}</span>
-                      <span className="text-xs text-gray-500 font-normal">{user?.email}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">{user?.email}</span>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -100,7 +100,7 @@ export function Layout() {
                   <DropdownMenuLabel>
                     <div className="flex flex-col">
                       <span className="font-medium">{user?.name}</span>
-                      <span className="text-xs text-gray-500 font-normal">{user?.email}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">{user?.email}</span>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />

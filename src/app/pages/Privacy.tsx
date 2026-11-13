@@ -17,7 +17,7 @@ export function Privacy() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-sm border border-border p-8 sm:p-12"
+          className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-border p-8 sm:p-12"
         >
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">

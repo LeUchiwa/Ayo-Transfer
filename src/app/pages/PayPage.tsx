@@ -108,7 +108,7 @@ export function PayPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-800/50 flex items-center justify-center p-4">
       <Card className="max-w-md w-full shadow-xl border-t-4 border-t-teal-600">
         <CardHeader className="text-center pb-2">
           <div className="w-16 h-16 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -130,7 +130,7 @@ export function PayPage() {
                 required
               />
               {Number(amount) > 0 && (
-                <p className="text-xs text-gray-500 text-right">Frais AYO (1%) : {Math.ceil(Number(amount) * 0.01).toLocaleString()} FCFA</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-right">Frais AYO (1%) : {Math.ceil(Number(amount) * 0.01).toLocaleString()} FCFA</p>
               )}
             </div>
             

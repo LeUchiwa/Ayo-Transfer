@@ -46,7 +46,7 @@ export function PWAInstallBanner() {
   return (
     <>
       <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-40 animate-in slide-in-from-bottom-4 fade-in duration-500">
-        <div className="bg-white rounded-xl shadow-2xl border border-border/50 p-4">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-border/50 p-4">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
               <Download className="w-5 h-5 text-primary" />
