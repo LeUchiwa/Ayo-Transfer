@@ -39,7 +39,7 @@ interface WalletContextType {
   error: string | null;
   addDeposit: (amount: number, method: string, methodIcon: string, phone: string, reference: string, fee: number) => Promise<void>;
   addWithdrawal: (amount: number, method: string, methodIcon: string, phone: string, reference: string, fee: number) => Promise<void>;
-  addTransfer: (amount: number, recipient: string, method: string, methodIcon: string, phone: string, reference: string, fee: number) => Promise<void>;
+  addTransfer: (amount: number, recipient: string, method: string, methodIcon: string, phone: string, reference: string, fee: number, pin?: string) => Promise<void>;
   confirmTransaction: (transactionId: string) => Promise<void>;
   checkBalance: (amount: number, fee?: number) => Promise<boolean>;
   refreshWallet: () => Promise<void>;
@@ -138,10 +138,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addTransfer = async (amount: number, recipient: string, method: string, methodIcon: string, phone: string, reference: string, fee: number) => {
+  const addTransfer = async (amount: number, recipient: string, method: string, methodIcon: string, phone: string, reference: string, fee: number, pin?: string) => {
     try {
       setError(null);
-      const result = await walletApi.createTransfer({ amount, recipient, method, methodIcon, phone, reference, fee });
+      const result = await walletApi.createTransfer({ amount, recipient, method, methodIcon, phone, reference, fee, pin });
       setTransactions(prev => [result.transaction, ...prev]);
     } catch (err) {
       console.error('Failed to create transfer:', err);

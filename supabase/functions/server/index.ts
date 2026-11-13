@@ -457,6 +457,38 @@ async function sendPushToUser(
   }
 }
 
+// ═══════════════════════════════════════════════
+// SÉCURITÉ — CODE PIN
+// ═══════════════════════════════════════════════
+
+async function handleGetPinStatus(userId: string) {
+  const hashedPin = await kv.get(`pin:${userId}`);
+  return Response.json({ hasPin: !!hashedPin }, { headers: corsHeaders });
+}
+
+async function handleSetPin(req: Request, userId: string) {
+  const body = await req.json().catch(() => ({}));
+  const { pin } = body;
+
+  if (!pin || !/^\d{4}$/.test(pin)) {
+    return Response.json({ error: "Le code PIN doit contenir exactement 4 chiffres." }, { status: 400, headers: corsHeaders });
+  }
+
+  const hashedPin = await hashPassword(pin);
+  await kv.set(`pin:${userId}`, hashedPin);
+
+  return Response.json({ success: true }, { headers: corsHeaders });
+}
+
+async function verifyPin(userId: string, pin: string): Promise<boolean> {
+  if (!pin) return false;
+  
+  const hashedPin = await kv.get(`pin:${userId}`);
+  if (!hashedPin) return true; // Pas de PIN configuré
+  
+  return await verifyPassword(pin, hashedPin);
+}
+
 async function handleTransfer(req: Request, userId: string) {
   // [RATE-LIMIT:handleTransfer]
   {
@@ -480,7 +512,14 @@ async function handleTransfer(req: Request, userId: string) {
   }
 
   const body = await req.json();
-  const { amount, recipient, method, methodIcon, phone, reference } = body;
+  const { amount, recipient, method, methodIcon, phone, reference, pin } = body;
+
+  // ═══ VÉRIFICATION DU CODE PIN ═══
+  const isPinValid = await verifyPin(userId, pin);
+  if (!isPinValid) {
+    return Response.json({ error: "invalid_pin", message: "Code PIN incorrect ou manquant." }, { status: 401, headers: corsHeaders });
+  }
+
 
   // ⬇️ SÉCURITÉ : Recalculer le fee côté serveur (1% par défaut)
   const transferRate = await getTransferFeeRate();
@@ -2577,6 +2616,8 @@ if (method === "GET" && path.endsWith("/admin/deposits/count")) {
         return await handleCancelExpiredDeposit(userId, id);
       }
       if (method === "GET" && path.endsWith("/profile")) return await handleGetProfile(userId);
+      if (method === "GET" && path.endsWith("/profile/pin")) return await handleGetPinStatus(userId);
+      if (method === "POST" && path.endsWith("/profile/pin")) return await handleSetPin(req, userId);
       if (method === "POST" && path.endsWith("/profile")) return await handleUpdateProfile(req, userId);
       if (method === "POST" && path.endsWith("/profile/change-password")) return await handleChangePassword(req, userId);
 if (method === "GET" && path.endsWith("/deposit-coords")) return await handleGetDepositCoords();

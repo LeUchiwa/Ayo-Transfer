@@ -8,10 +8,19 @@ import { toast } from "sonner";
 import { supabase } from "../../../utils/supabase/client";
 import { projectId } from "../../../utils/supabase/info";
 import { useAuth } from "../contexts/AuthContext";
+import { PinModal } from "../components/PinModal";
+import { walletApi } from "../../../utils/api";
 
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/server`;
 
 export function Profile() {
+  const [hasPin, setHasPin] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
+
+  useEffect(() => {
+    walletApi.getPinStatus().then(res => setHasPin(res.hasPin)).catch(console.error);
+  }, []);
+
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -135,7 +144,7 @@ export function Profile() {
       <div className="max-w-2xl mx-auto py-12 text-center">
         <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto" />
       </div>
-    );
+);
   }
 
   return (
@@ -274,6 +283,38 @@ export function Profile() {
           </form>
         </CardContent>
       </Card>
+
+  
+        <Card className="mt-6 border-teal-100 shadow-sm">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-full ${hasPin ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-500"}`}>
+                <Lock className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Code PIN de sécurité</p>
+                <p className="text-sm text-gray-500">{hasPin ? "Activé" : "Non configuré (recommandé)"}</p>
+              </div>
+            </div>
+            <Button onClick={() => setShowPinModal(true)} variant={hasPin ? "outline" : "default"} className={!hasPin ? "bg-teal-600 text-white" : ""}>
+              {hasPin ? "Modifier" : "Configurer"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <PinModal 
+          isOpen={showPinModal}
+          onClose={() => setShowPinModal(false)}
+          title="Configurer le PIN"
+          description="Choisissez un code à 4 chiffres pour sécuriser vos transferts."
+          onSubmit={async (pin) => {
+            await walletApi.setPin(pin);
+            setHasPin(true);
+            setShowPinModal(false);
+            toast.success("Code PIN configuré avec succès !");
+          }}
+        />
+  
     </div>
   );
 }

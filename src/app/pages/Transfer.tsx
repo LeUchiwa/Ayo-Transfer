@@ -10,6 +10,8 @@ import {
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { useWallet } from "../contexts/WalletContext";
+import { PinModal } from "../components/PinModal";
+import { walletApi } from "../../../utils/api";
 import { BeneficiarySelector } from "../components/BeneficiarySelector";
 import type { Beneficiary } from "../../../utils/api";
 
@@ -34,6 +36,10 @@ export function Transfer() {
     recipientEmail: "", recipientName: "", phone: "", amount: "", note: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasPin, setHasPin] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pendingTxData, setPendingTxData] = useState<any>(null);
+
   const [lastRef, setLastRef] = useState("");
   const [selectedBenefId, setSelectedBenefId] = useState<string | null>(null);
   const [recipientStatus, setRecipientStatus] = useState<RecipientStatus>("idle");
@@ -41,6 +47,10 @@ export function Transfer() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newBenef, setNewBenef] = useState({ email: "", name: "", phone: "" });
   const debounceRef = useRef<number | undefined>(undefined);
+
+    useEffect(() => {
+    walletApi.getPinStatus().then(res => setHasPin(res.hasPin)).catch(console.error);
+  }, []);
 
   const fee = useMemo(() => {
     const amt = Number(formData.amount);
@@ -84,6 +94,37 @@ export function Transfer() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const amount = Number(formData.amount);
+
+    if (amount <= 0) {
+      toast.error("Montant invalide", { description: "Le montant doit être supérieur à 0" });
+      return;
+    }
+
+    if (!formData.recipientEmail || !formData.recipientEmail.includes("@")) {
+      toast.error("Email invalide", { description: "Veuillez entrer l'email du destinataire AYO." });
+      return;
+    }
+
+    const hasSufficientBalance = await checkBalance(amount, fee);
+    if (!hasSufficientBalance) {
+      toast.error("Solde insuffisant", {
+        description: `Solde disponible: ${stats.balance.toLocaleString()} FCFA, Requis: ${totalDebit.toLocaleString()} FCFA`,
+      });
+      return;
+    }
+
+    if (hasPin) {
+      setShowPinModal(true);
+      return;
+    }
+
+    await executeTransfer();
+  };
+
+  const executeTransfer = async (pin?: string) => {
+    
+
+    const amount = Number(formData.amount);
     if (amount <= 0) { toast.error("Montant invalide"); return; }
     if (recipientStatus !== "found") {
       toast.error("Destinataire non vérifié", { description: "Vérifiez l'email avant d'envoyer." });
@@ -101,7 +142,7 @@ export function Transfer() {
       const ref = generateRef();
       setLastRef(ref);
 
-      await addTransfer(amount, formData.recipientEmail, "AYO Wallet", "💸", formData.phone, ref, fee);
+      await addTransfer(amount, formData.recipientEmail, "AYO Wallet", "💸", formData.phone, ref, fee, pin);
 
       // ⭐ Auto-save / touch bénéficiaire (non bloquant)
       try {
@@ -371,6 +412,22 @@ export function Transfer() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <PinModal 
+        isOpen={showPinModal}
+        onClose={() => setShowPinModal(false)}
+        title="Confirmer le transfert"
+        description={`Envoyer ${formData.amount} FCFA à ${formData.recipientEmail}`}
+        onSubmit={async (pin) => {
+          try {
+            await executeTransfer(pin);
+            setShowPinModal(false);
+          } catch (e) {
+            // On garde le modal ouvert, mais on affiche la vraie raison dans la console
+            console.error("Échec du transfert :", e);
+          }
+        }}
+      />
     </motion.div>
   );
 }

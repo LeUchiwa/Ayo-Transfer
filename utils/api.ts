@@ -115,6 +115,14 @@ export const walletApi = {
     try { return await apiCall('/wallet/verify-recipient', { method: 'POST', body: { email } }); }
     catch { return { found: false, reason: 'rate_limited' }; }
   },
+
+  // ═══ SÉCURITÉ PIN ═══
+  getPinStatus: async (): Promise<{ hasPin: boolean }> => {
+    return await apiCall('/profile/pin');
+  },
+  setPin: async (pin: string): Promise<{ success: boolean }> => {
+    return await apiCall('/profile/pin', { method: 'POST', body: { pin } });
+  },
   getBeneficiaries: async (): Promise<Beneficiary[]> => {
     const data = await apiCall('/beneficiaries');
     return data.beneficiaries ?? [];
