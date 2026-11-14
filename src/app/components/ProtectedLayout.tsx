@@ -147,7 +147,8 @@ export function ProtectedLayout() {
 
               {/* Mobile Navigation */}
               <div className="md:hidden flex items-center gap-2">
-                <DropdownMenu>
+                <ThemeToggle />
+        <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="rounded-full">
                       <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center">

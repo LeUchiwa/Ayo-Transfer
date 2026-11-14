@@ -181,6 +181,7 @@ export function History() {
                   <SelectItem value="all">Toutes les transactions</SelectItem>
                   <SelectItem value="sent">Envoyées / Retraits</SelectItem>
                   <SelectItem value="received">Reçues / Dépôts</SelectItem>
+                  <SelectItem value="platform_revenue">Revenus plateforme</SelectItem>
                 </SelectContent>
               </Select>
 

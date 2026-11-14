@@ -191,6 +191,7 @@ function getTransactionTypeClass(type: string) {
     case "withdrawal": return "bg-red-50 text-red-700";
     case "transfer_sent": return "bg-blue-50 text-blue-700";
     case "transfer_received": return "bg-teal-50 text-teal-700";
+    case "platform_revenue": return "bg-purple-50 text-purple-700 font-semibold border border-purple-200";
     default: return "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300";
   }
 }
@@ -1950,6 +1951,7 @@ export function Admin() {
                     <option value="deposit">Dépôts</option>
                     <option value="withdrawal">Retraits</option>
                     <option value="transfer_sent">Transferts</option>
+                    <option value="platform_revenue">Revenus plateforme</option>
                   </select>
                   <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 </div>
