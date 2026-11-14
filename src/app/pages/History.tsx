@@ -47,6 +47,11 @@ function toDisplay(tx: ApiTransaction): DisplayTransaction {
     case "transfer_sent": direction = "sent"; label = "Transfert envoyé"; counterpart = tx.recipient || "—"; break;
     case "transfer_received": direction = "received"; label = "Transfert reçu"; counterpart = tx.sender || "—"; break;
     case "platform_revenue": direction = "received"; label = "Revenu plateforme"; counterpart = "Frais de transaction"; break;
+    case "external_transfer": 
+      direction = "sent"; 
+      label = `Envoi externe (${tx.country || "—"})`; 
+      counterpart = tx.destinationName || "—"; 
+      break;
     case "deposit": direction = "received"; label = "Dépôt"; counterpart = tx.phone || "—"; break;
     case "withdrawal": direction = "sent"; label = "Retrait"; counterpart = tx.phone || "—"; break;
     default: direction = "received"; label = tx.type; counterpart = "—";
@@ -57,7 +62,7 @@ function toDisplay(tx: ApiTransaction): DisplayTransaction {
     direction,
     label,
     counterpart,
-    amount: tx.amount,
+    amount: tx.amount ?? (tx as any).amountFCFA ?? 0,
     method: tx.method || "—",
     date: tx.createdAt,
     status: tx.status,
@@ -290,7 +295,7 @@ export function History() {
                       <div className="flex items-center justify-between md:justify-end gap-4 md:gap-6">
                         <div className="text-right">
                           <p className={`font-semibold ${t.direction === "sent" ? "text-red-600" : "text-green-600"}`}>
-                            {t.direction === "sent" ? "-" : "+"}{t.amount.toLocaleString()} FCFA
+                            {t.direction === "sent" ? "-" : "+"}{(t.amount || 0).toLocaleString()} FCFA
                           </p>
                           <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(t.date)}</p>
                         </div>

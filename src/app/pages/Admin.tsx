@@ -19,6 +19,7 @@ import { projectId } from "../../../utils/supabase/info";
 import ayoLogo from "@/imports/AYO.png";
 import { Button } from "../components/ui/button";
 import { AdminNewsTab } from "../components/AdminNewsTab";
+import { AdminExternalTransfersTab } from "../components/AdminExternalTransfersTab";
 import { ServiceLogo } from "../components/ServiceLogo";
 
 // ─── Config API ───────────────────────────────────────────────────────────────
@@ -1611,6 +1612,11 @@ export function Admin() {
                     </table>
                   </div>
                 )}
+              </div>
+
+              {/* Section Envois externes */}
+              <div className="mt-8">
+                <AdminExternalTransfersTab />
               </div>
 
               {/* Section Retraits */}

@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import {
-  Send, ArrowUpRight, ArrowDownRight, Wallet as WalletIcon,
+  Send, ArrowUpRight, Globe, ArrowDownRight, Wallet as WalletIcon,
   TrendingUp, Plus, History, Sparkles, Eye, EyeOff,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -161,7 +161,18 @@ export function Dashboard() {
           </Card>
         </button>
 
-<Link to="/wallet?tab=deposit">
+<Link to="/external-transfer">
+          <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
+            <CardContent className="p-4 flex flex-col items-center text-center gap-2">
+              <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center">
+                <Globe className="w-6 h-6 text-indigo-600" />
+              </div>
+              <p className="text-sm font-medium text-foreground">Extérieur</p>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link to="/wallet?tab=deposit">
   <Card className="bg-white dark:bg-slate-900 hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer border-border/50">
     <CardContent className="p-4 flex flex-col items-center text-center gap-2">
       <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center">

@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import { Dashboard } from "./pages/Dashboard";
 import { Transfer } from "./pages/Transfer";
+import { ExternalTransfer } from "./pages/ExternalTransfer";
 import { History } from "./pages/History";
 import { Wallet } from "./pages/Wallet";
 import { Kyc } from "./pages/Kyc";
@@ -70,6 +71,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: Dashboard },
       { path: "transfer", Component: Transfer },
+      { path: "external-transfer", Component: ExternalTransfer },
       { path: "history", Component: History },
       { path: "wallet", Component: Wallet },
       { path: "profile", Component: Profile },

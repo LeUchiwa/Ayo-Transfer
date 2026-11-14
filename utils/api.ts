@@ -109,6 +109,18 @@ export const walletApi = {
   cancelExpiredDeposit: (id: string) =>
     apiCall(`/wallet/deposit/${id}/cancel-expired`, { method: 'POST' }),
   getServices: () => apiCall('/services'),
+  // ═══ ENVOI EXTERNE ═══
+  createExternalTransfer: (data: {
+    amountFCFA: number;
+    currency: string;
+    country: string;
+    method: string;
+    destinationName: string;
+    destinationPhone: string;
+    pin?: string;
+    reference: string;
+  }) => apiCall('/wallet/external-transfer', { method: 'POST', body: data }),
+
 
   // Bénéficiaires
   verifyRecipient: async (email: string): Promise<{ found: boolean; name?: string; reason?: "not_found" | "self" | "invalid_format" | "rate_limited"; }> => {
