@@ -1899,6 +1899,64 @@ async function handleAdminListUsers(supabase: any) {
   return Response.json({ users: enriched }, { headers: corsHeaders });
 }
 
+async function handleAdminResetPin(userId: string) {
+  // Vérifier que l'utilisateur existe
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const { data: { user }, error } = await supabase.auth.admin.getUserById(userId);
+  if (error || !user) {
+    return Response.json({ error: "User not found" }, { status: 404, headers: corsHeaders });
+  }
+
+  // Vérifier qu'un PIN existe
+  const hashedPin = await kv.get(`pin:${userId}`);
+  if (!hashedPin) {
+    return Response.json({
+      success: false,
+      message: "Cet utilisateur n'a pas de code PIN configuré."
+    }, { status: 400, headers: corsHeaders });
+  }
+
+  // Supprimer le PIN
+  try {
+    await kv.delete(`pin:${userId}`);
+  } catch (e) {
+    // Fallback si delete n'existe pas : set à null
+    await kv.set(`pin:${userId}`, null);
+  }
+
+  // Audit log
+  try {
+    const audit = (await kv.get("admin:audit")) || [];
+    audit.unshift({
+      timestamp: new Date().toISOString(),
+      action: "reset_pin",
+      targetUserId: userId,
+      targetEmail: user.email,
+      admin: "AYO-ADMIN",
+    });
+    await kv.set("admin:audit", audit.slice(0, 500));
+  } catch (e) {
+    console.error("[AUDIT] Failed to log PIN reset:", e);
+  }
+
+  console.log(`[ADMIN] PIN reset for user ${userId} (${user.email})`);
+
+  // Email de notification à l'utilisateur
+  if (user.email) {
+    (async () => {
+      try {
+        await sendEmail(user.email, "🔐 Votre code PIN a été réinitialisé",
+          `<p>Bonjour ${user.user_metadata?.name || "Utilisateur"},</p>
+           <p>Votre code PIN a été réinitialisé par un administrateur AYO.</p>
+           <p>Pour des raisons de sécurité, veuillez en configurer un nouveau dès maintenant depuis votre profil.</p>
+           <p>Si vous n'êtes pas à l'origine de cette demande, contactez immédiatement le support.</p>`);
+      } catch (err) { console.error("[EMAIL]", err); }
+    })();
+  }
+
+  return Response.json({ success: true }, { headers: corsHeaders });
+}
+
 async function handleAdminSuspendUser(supabase: any, userId: string, reason: string) {
   const { data: { user }, error: getUserError } = await supabase.auth.admin.getUserById(userId);
   if (getUserError || !user) {
@@ -2638,6 +2696,11 @@ export default {
           const userId = path.split("/admin/users/")[1].replace("/activity", "");
           return await handleAdminGetUserActivity(userId);
         }
+        if (method === "POST" && path.includes("/admin/users/") && path.endsWith("/reset-pin")) {
+          const userId = path.split("/admin/users/")[1].replace("/reset-pin", "");
+          return await handleAdminResetPin(userId);
+        }
+
         if (method === "POST" && path.includes("/admin/users/") && path.endsWith("/suspend")) {
           const userId = path.split("/admin/users/")[1].replace("/suspend", "");
           const body = await req.json().catch(() => ({}));

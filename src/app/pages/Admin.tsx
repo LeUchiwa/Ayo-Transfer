@@ -732,6 +732,12 @@ export function Admin() {
     loadingActivity: boolean;
   }>({ open: false, user: null, reason: "", activity: null, loadingActivity: false });
 
+  const [resetPinModal, setResetPinModal] = useState<{
+    open: boolean;
+    user: AdminUser | null;
+    loading: boolean;
+  }>({ open: false, user: null, loading: false });
+
 
   const [serviceSaving, setServiceSaving] = useState(false);
   const [deleteServiceModal, setDeleteServiceModal] = useState<{ open: boolean; service: AdminService | null }>({
@@ -1135,6 +1141,23 @@ export function Admin() {
       loadUsers();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
+    }
+  };
+
+  const handleResetPin = (user: AdminUser) => {
+    setResetPinModal({ open: true, user, loading: false });
+  };
+
+  const confirmResetPin = async () => {
+    if (!resetPinModal.user) return;
+    setResetPinModal(s => ({ ...s, loading: true }));
+    try {
+      await adminCall(`/admin/users/${resetPinModal.user.id}/reset-pin`, { method: "POST" });
+      toast.success(`PIN de ${resetPinModal.user.name} réinitialisé`);
+      setResetPinModal({ open: false, user: null, loading: false });
+    } catch (err: any) {
+      toast.error("Erreur", { description: err.message });
+      setResetPinModal(s => ({ ...s, loading: false }));
     }
   };
 
@@ -1906,7 +1929,15 @@ export function Admin() {
 
                               {user.role !== "admin" && (
                                 <>
-                                  {user.bannedUntil && new Date(user.bannedUntil) > new Date() ? (
+                                  <button
+                                      onClick={() => handleResetPin(user)}
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                      title="Réinitialiser le PIN"
+                                    >
+                                      <KeyRound className="w-3.5 h-3.5" />
+                                      PIN
+                                    </button>
+                                    {user.bannedUntil && new Date(user.bannedUntil) > new Date() ? (
                                     <button
                                       onClick={() => handleReactivateUser(user)}
                                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
@@ -2682,6 +2713,32 @@ export function Admin() {
               >
                 {processingId === rejectModal.deposit.id && <Loader2 className="w-4 h-4 animate-spin" />}
                 Confirmer le rejet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de réinitialisation du PIN */}
+      {resetPinModal.open && resetPinModal.user && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => !resetPinModal.loading && setResetPinModal(s => ({ ...s, open: false }))}>
+          <div className="bg-white dark:bg-slate-900 rounded-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center">
+                <KeyRound className="w-6 h-6 text-orange-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">Réinitialiser le PIN</h3>
+                <p className="text-sm text-muted-foreground">{resetPinModal.user.name} · {resetPinModal.user.email}</p>
+              </div>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-sm text-amber-800">
+              ⚠️ Le code PIN sera supprimé. L'utilisateur devra en configurer un nouveau. Un email de notification lui sera envoyé.
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => setResetPinModal({ open: false, user: null, loading: false })} disabled={resetPinModal.loading} className="flex-1 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50">Annuler</button>
+              <button onClick={confirmResetPin} disabled={resetPinModal.loading} className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700 disabled:opacity-50 flex items-center justify-center gap-2">
+                {resetPinModal.loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><KeyRound className="w-4 h-4" />Réinitialiser</>}
               </button>
             </div>
           </div>
