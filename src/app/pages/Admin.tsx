@@ -119,7 +119,13 @@ interface AdminTransaction {
   userName: string;
   userEmail: string;
   type: string;
-  amount: number;
+  amount?: number;
+  amountFCFA?: number;
+  amountLocal?: number;
+  currency?: string;
+  country?: string;
+  destinationName?: string;
+  destinationPhone?: string;
   fee: number;
   status: string;
   reference: string;
@@ -183,6 +189,7 @@ function getTransactionTypeLabel(type: string) {
     "transfer_sent": "Transfert envoyé",
     "transfer_received": "Transfert reçu",
     "platform_revenue": "Revenu plateforme",
+    "external_transfer": "Envoi externe",
   };
   return labels[type] || type;
 }
@@ -194,6 +201,7 @@ function getTransactionTypeClass(type: string) {
     case "transfer_sent": return "bg-blue-50 text-blue-700";
     case "transfer_received": return "bg-teal-50 text-teal-700";
     case "platform_revenue": return "bg-purple-50 text-purple-700 font-semibold border border-purple-200";
+    case "external_transfer": return "bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200";
     default: return "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300";
   }
 }
@@ -2035,8 +2043,13 @@ export function Admin() {
                             </span>
                           </td>
                           <td className="px-4 py-3">
-                            <p className="font-semibold text-foreground">{tx.amount.toLocaleString()} FCFA</p>
-                            {tx.fee > 0 && <p className="text-xs text-gray-400">Frais: {tx.fee.toLocaleString()}</p>}
+                            <p className="font-semibold text-foreground">{(tx.amount ?? tx.amountFCFA ?? 0).toLocaleString()} FCFA</p>
+                            {tx.type === "external_transfer" && tx.amountLocal && tx.currency && (
+                              <p className="text-xs text-indigo-600 font-medium mt-0.5">
+                                → {tx.amountLocal.toLocaleString()} {tx.currency} ({tx.country || ""})
+                              </p>
+                            )}
+                            {(tx.fee ?? 0) > 0 && <p className="text-xs text-gray-400">Frais: {(tx.fee ?? 0).toLocaleString()}</p>}
                           </td>
                           <td className="px-4 py-3 text-xs text-gray-600 dark:text-gray-400">
                             {tx.methodIcon} {tx.method}
