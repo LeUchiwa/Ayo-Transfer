@@ -181,6 +181,7 @@ function getTransactionTypeLabel(type: string) {
     "withdrawal": "Retrait",
     "transfer_sent": "Transfert envoyé",
     "transfer_received": "Transfert reçu",
+    "platform_revenue": "Revenu plateforme",
   };
   return labels[type] || type;
 }

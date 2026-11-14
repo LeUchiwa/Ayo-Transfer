@@ -46,6 +46,7 @@ function toDisplay(tx: ApiTransaction): DisplayTransaction {
   switch (tx.type) {
     case "transfer_sent": direction = "sent"; label = "Transfert envoyé"; counterpart = tx.recipient || "—"; break;
     case "transfer_received": direction = "received"; label = "Transfert reçu"; counterpart = tx.sender || "—"; break;
+    case "platform_revenue": direction = "received"; label = "Revenu plateforme"; counterpart = "Frais de transaction"; break;
     case "deposit": direction = "received"; label = "Dépôt"; counterpart = tx.phone || "—"; break;
     case "withdrawal": direction = "sent"; label = "Retrait"; counterpart = tx.phone || "—"; break;
     default: direction = "received"; label = tx.type; counterpart = "—";
