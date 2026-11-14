@@ -40,9 +40,12 @@ export function Dashboard() {
       type: t.type === 'deposit' || t.type === 'transfer_received' ? 'received' : 'sent',
       recipient: t.recipient,
       sender: t.sender,
-      amount: t.amount,
+      amount: t.amount ?? (t as any).amountFCFA ?? 0,
       method: t.method,
       methodIcon: t.methodIcon,
+      currency: (t as any).currency,
+      originalAmount: (t as any).amountLocal,
+      country: (t as any).country,
       date: new Date(t.createdAt).toLocaleString("fr-FR", {
         day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
       }),
@@ -387,7 +390,7 @@ export function Dashboard() {
                         }`}
                       >
                         {transaction.type === "sent" ? "-" : "+"}
-                        {transaction.amount.toLocaleString()} FCFA
+                        {(transaction.amount ?? 0).toLocaleString()} FCFA
                       </p>
                     </div>
                   </motion.div>
