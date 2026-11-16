@@ -378,9 +378,50 @@ async function getLimitsForUser(userId: string) {
   const lim = settings?.limits || {};
   const kyc = await kv.get(`kyc:${userId}`);
   const approved = kyc?.status === "approved";
+
+  // Récupérer l'ancienneté du compte
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  let accountAgeDays = 999; // Par défaut : très ancien (au cas où)
+  try {
+    const { data: { user } } = await supabase.auth.admin.getUserById(userId);
+    if (user?.created_at) {
+      const created = new Date(user.created_at).getTime();
+      accountAgeDays = Math.floor((Date.now() - created) / (1000 * 60 * 60 * 24));
+    }
+  } catch (e) { console.warn("[LIMITS] Failed to get user age:", e); }
+
+  // Si KYC approuvé : limites max
+  if (approved) {
+    return {
+      daily: lim.kycDaily ?? 2_000_000,
+      monthly: lim.kycMonthly ?? 10_000_000,
+      stage: "kyc",
+    };
+  }
+
+  // Compte < 7 jours : limites réduites (anti-bot)
+  if (accountAgeDays < 7) {
+    return {
+      daily: lim.newAccountDaily ?? 100_000,
+      monthly: lim.newAccountMonthly ?? 300_000,
+      stage: "new",
+    };
+  }
+
+  // Compte 7-30 jours : limites normales
+  if (accountAgeDays < 30) {
+    return {
+      daily: lim.daily ?? 500_000,
+      monthly: lim.monthly ?? 2_000_000,
+      stage: "standard",
+    };
+  }
+
+  // Compte > 30 jours : limites normales aussi
   return {
-    daily:   approved ? (lim.kycDaily   ?? 2_000_000)  : (lim.daily   ?? 500_000),
-    monthly: approved ? (lim.kycMonthly ?? 10_000_000) : (lim.monthly ?? 2_000_000),
+    daily: lim.daily ?? 500_000,
+    monthly: lim.monthly ?? 2_000_000,
+    stage: "trusted",
   };
 }
 
@@ -496,7 +537,7 @@ async function verifyPin(userId: string, pin: string): Promise<boolean> {
   if (!pin) return false;
   
   const hashedPin = await kv.get(`pin:${userId}`);
-  if (!hashedPin) return true; // Pas de PIN configuré
+  if (!hashedPin || hashedPin === "__RESET__") return true; // Pas de PIN configuré
   
   return await verifyPassword(pin, hashedPin);
 }
@@ -1900,61 +1941,81 @@ async function handleAdminListUsers(supabase: any) {
 }
 
 async function handleAdminResetPin(userId: string) {
-  // Vérifier que l'utilisateur existe
-  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const { data: { user }, error } = await supabase.auth.admin.getUserById(userId);
-  if (error || !user) {
-    return Response.json({ error: "User not found" }, { status: 404, headers: corsHeaders });
-  }
+  console.log(`[ADMIN-RESET-PIN] Starting for userId: ${userId}`);
 
-  // Vérifier qu'un PIN existe
-  const hashedPin = await kv.get(`pin:${userId}`);
-  if (!hashedPin) {
-    return Response.json({
-      success: false,
-      message: "Cet utilisateur n'a pas de code PIN configuré."
-    }, { status: 400, headers: corsHeaders });
-  }
-
-  // Supprimer le PIN
   try {
-    await kv.delete(`pin:${userId}`);
-  } catch (e) {
-    // Fallback si delete n'existe pas : set à null
-    await kv.set(`pin:${userId}`, null);
+    // 1. Vérifier que l'utilisateur existe
+    console.log(`[ADMIN-RESET-PIN] Step 1: Checking user exists`);
+    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const { data: { user }, error } = await supabase.auth.admin.getUserById(userId);
+    
+    if (error) {
+      console.error(`[ADMIN-RESET-PIN] Error fetching user:`, error);
+      return Response.json({ error: "User fetch failed", details: error.message }, { status: 500, headers: corsHeaders });
+    }
+    if (!user) {
+      console.log(`[ADMIN-RESET-PIN] User not found`);
+      return Response.json({ error: "User not found" }, { status: 404, headers: corsHeaders });
+    }
+    console.log(`[ADMIN-RESET-PIN] User found: ${user.email}`);
+
+    // 2. Vérifier qu'un PIN existe
+    console.log(`[ADMIN-RESET-PIN] Step 2: Checking PIN exists`);
+    const hashedPin = await kv.get(`pin:${userId}`);
+    console.log(`[ADMIN-RESET-PIN] hashedPin type: ${typeof hashedPin}, exists: ${!!hashedPin}`);
+    
+    if (!hashedPin) {
+      console.log(`[ADMIN-RESET-PIN] No PIN configured for this user`);
+      return Response.json({
+        success: false,
+        message: "Cet utilisateur n'a pas de code PIN configuré."
+      }, { status: 400, headers: corsHeaders });
+    }
+
+    // 3. Supprimer le PIN (set à null)
+    console.log(`[ADMIN-RESET-PIN] Step 3: Setting PIN to null`);
+    await kv.set(`pin:${userId}`, "__RESET__");
+    console.log(`[ADMIN-RESET-PIN] PIN set to null successfully`);
+
+    // 4. Audit log
+    console.log(`[ADMIN-RESET-PIN] Step 4: Writing audit log`);
+    try {
+      const audit = (await kv.get("admin:audit")) || [];
+      audit.unshift({
+        timestamp: new Date().toISOString(),
+        action: "reset_pin",
+        targetUserId: userId,
+        targetEmail: user.email,
+        admin: "AYO-ADMIN",
+      });
+      await kv.set("admin:audit", audit.slice(0, 500));
+      console.log(`[ADMIN-RESET-PIN] Audit log written`);
+    } catch (e) {
+      console.error(`[ADMIN-RESET-PIN] Audit log failed (non-blocking):`, e);
+    }
+
+    // 5. Email de notification
+    console.log(`[ADMIN-RESET-PIN] Step 5: Sending email notification`);
+    if (user.email) {
+      (async () => {
+        try {
+          await sendEmail(user.email, "🔐 Votre code PIN a été réinitialisé",
+            `<p>Bonjour ${user.user_metadata?.name || "Utilisateur"},</p>
+             <p>Votre code PIN a été réinitialisé par un administrateur AYO.</p>
+             <p>Veuillez en configurer un nouveau dès maintenant depuis votre profil.</p>`);
+        } catch (err) { console.error("[EMAIL]", err); }
+      })();
+    }
+
+    console.log(`[ADMIN-RESET-PIN] SUCCESS for ${userId}`);
+    return Response.json({ success: true }, { headers: corsHeaders });
+  } catch (err) {
+    console.error(`[ADMIN-RESET-PIN] FATAL ERROR:`, err);
+    return Response.json({ 
+      error: "Internal error", 
+      details: err instanceof Error ? err.message : String(err)
+    }, { status: 500, headers: corsHeaders });
   }
-
-  // Audit log
-  try {
-    const audit = (await kv.get("admin:audit")) || [];
-    audit.unshift({
-      timestamp: new Date().toISOString(),
-      action: "reset_pin",
-      targetUserId: userId,
-      targetEmail: user.email,
-      admin: "AYO-ADMIN",
-    });
-    await kv.set("admin:audit", audit.slice(0, 500));
-  } catch (e) {
-    console.error("[AUDIT] Failed to log PIN reset:", e);
-  }
-
-  console.log(`[ADMIN] PIN reset for user ${userId} (${user.email})`);
-
-  // Email de notification à l'utilisateur
-  if (user.email) {
-    (async () => {
-      try {
-        await sendEmail(user.email, "🔐 Votre code PIN a été réinitialisé",
-          `<p>Bonjour ${user.user_metadata?.name || "Utilisateur"},</p>
-           <p>Votre code PIN a été réinitialisé par un administrateur AYO.</p>
-           <p>Pour des raisons de sécurité, veuillez en configurer un nouveau dès maintenant depuis votre profil.</p>
-           <p>Si vous n'êtes pas à l'origine de cette demande, contactez immédiatement le support.</p>`);
-      } catch (err) { console.error("[EMAIL]", err); }
-    })();
-  }
-
-  return Response.json({ success: true }, { headers: corsHeaders });
 }
 
 async function handleAdminSuspendUser(supabase: any, userId: string, reason: string) {
@@ -2004,6 +2065,41 @@ async function handleGetKycStatus(userId: string) {
 }
 
 async function handleSubmitKyc(req: Request, userId: string) {
+  // ═══ ANTI-BOT : Le compte doit avoir au moins 24h ═══
+  const supabaseCheck = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  try {
+    const { data: { user } } = await supabaseCheck.auth.admin.getUserById(userId);
+    if (user?.created_at) {
+      const ageHours = (Date.now() - new Date(user.created_at).getTime()) / (1000 * 60 * 60);
+      if (ageHours < 24) {
+        const hoursRemaining = Math.ceil(24 - ageHours);
+        return Response.json({
+          error: "account_too_new",
+          message: `Votre compte doit avoir au moins 24h pour soumettre un KYC. Réessayez dans ${hoursRemaining}h.`,
+          hours_remaining: hoursRemaining,
+        }, { status: 403, headers: corsHeaders });
+      }
+    }
+  } catch (e) {
+    console.error("[KYC] Failed to check account age:", e);
+    // On laisse passer en cas d'erreur de lecture pour ne pas bloquer
+  }
+
+  // Vérifier qu'aucun KYC n'existe déjà (pending ou approved)
+  const existingKyc = await kv.get(`kyc:${userId}`);
+  if (existingKyc?.status === "approved") {
+    return Response.json({
+      error: "kyc_already_approved",
+      message: "Votre identité est déjà vérifiée.",
+    }, { status: 400, headers: corsHeaders });
+  }
+  if (existingKyc?.status === "pending") {
+    return Response.json({
+      error: "kyc_already_pending",
+      message: "Votre KYC est déjà en cours d'examen.",
+    }, { status: 400, headers: corsHeaders });
+  }
+
   const body = await req.json();
   const { fullName, idType, idNumber, idDocumentRectoUrl, idDocumentVersoUrl, selfieUrl } = body;
 
@@ -2663,6 +2759,26 @@ export default {
       } catch (err) {
         return Response.json({ error: "Rotation failed", details: String(err) }, { status: 500, headers: corsHeaders });
       }
+    }
+
+
+    // ═══ RATE LIMIT REGISTER (public) ═══
+    if (method === "POST" && path.endsWith("/register/check-rate")) {
+      const ip = getClientIp(req);
+      const check = await checkRateLimit(kv, `rate:register:${ip}`, {
+        maxAttempts: 3,
+        windowMs: 60 * 60 * 1000, // 1 heure
+        blockMs: 60 * 60 * 1000,   // Bloque 1 heure
+      });
+      if (!check.allowed) {
+        const minutesLeft = Math.ceil((check.retryAfterMs || 0) / 60000);
+        return Response.json({
+          allowed: false,
+          message: `Trop de créations de compte depuis cette IP. Réessayez dans ${minutesLeft} minutes.`,
+          retry_after_ms: check.retryAfterMs,
+        }, { status: 429, headers: corsHeaders });
+      }
+      return Response.json({ allowed: true }, { headers: corsHeaders });
     }
 
     // ═══ ROUTE PUBLIQUE (Pas de JWT requis) ═══

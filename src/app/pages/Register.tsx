@@ -51,6 +51,22 @@ export function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // ═══ ANTI-BOT : Vérifier le rate limit par IP ═══
+    try {
+      const rateRes = await fetch(`https://${projectId}.supabase.co/functions/v1/server/register/check-rate`, {
+        method: "POST",
+      });
+      if (rateRes.status === 429) {
+        const data = await rateRes.json();
+        toast.error("Trop de tentatives", { description: data.message });
+        return;
+      }
+    } catch (err) {
+      console.warn("[REGISTER] Rate check failed, continuing:", err);
+    }
+
+    e.preventDefault();
     if (!name || !email || !password || !confirmPassword) {
       toast.error('Veuillez remplir tous les champs');
       return;
