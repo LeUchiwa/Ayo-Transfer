@@ -489,6 +489,7 @@ type WalletStep = "form" | "waiting_coords" | "coords_ready" | "pending_validati
 
 export function Wallet() {
   const { stats, transactions, isLoading, addDeposit, addWithdrawal, checkBalance, refreshWallet, getTransactionStatus } = useWallet();
+  const { format } = useCurrency();
   const balance = stats.balance;
 
   // Deposit state
