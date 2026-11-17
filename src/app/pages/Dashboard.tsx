@@ -9,6 +9,8 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { useWallet } from "../contexts/WalletContext";
 import { useAuth } from "../contexts/AuthContext";
+import { useCurrency } from "../hooks/useCurrency";
+import { CurrencySelector } from "../components/CurrencySelector";
 import { WelcomeRotator } from "../components/WelcomeRotator";
 import { ReceiveMoneyModal } from "../components/ReceiveMoneyModal";
 import { QrCode } from "lucide-react";
@@ -18,6 +20,7 @@ import { Skeleton, TransactionSkeleton } from "../components/Skeleton";
 export function Dashboard() {
   const { stats, transactions, isLoading } = useWallet();
   const { user } = useAuth();
+  const { format } = useCurrency();
   const [showBalance, setShowBalance] = useState(true);
   const [showReceiveModal, setShowReceiveModal] = useState(false);
 
@@ -97,20 +100,22 @@ export function Dashboard() {
                 <WalletIcon className="w-4 h-4" />
                 Solde disponible
               </CardDescription>
-              <button
-                onClick={() => setShowBalance(!showBalance)}
-                className="text-white/80 hover:text-white transition-colors"
-              >
-                {showBalance ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-              </button>
+              <div className="flex items-center gap-2">
+                <CurrencySelector />
+                <button
+                  onClick={() => setShowBalance(!showBalance)}
+                  className="text-white/80 hover:text-white transition-colors"
+                >
+                  {showBalance ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
             <CardTitle className="text-4xl sm:text-5xl font-bold mt-2">
               {isLoading ? (
   <Skeleton className="h-12 w-48 bg-white/20 dark:bg-slate-900/20" />
 ) : (
   <>
-                  {showBalance ? stats.balance.toLocaleString() : "•••••••"}
-                  <span className="text-lg font-medium text-white/80 ml-2">FCFA</span>
+                  {showBalance ? format(stats.balance) : "•••••••"}
                 </>
               )}
             </CardTitle>
@@ -227,7 +232,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">
-              {isLoading ? <Skeleton className="h-7 w-32" /> : `${stats.totalSent.toLocaleString()} FCFA`}
+              {isLoading ? <Skeleton className="h-7 w-32" /> : format(stats.totalSent)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {stats.countSent} transaction{stats.countSent > 1 ? "s" : ""}

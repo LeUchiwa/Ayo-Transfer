@@ -232,24 +232,30 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
   }
 }
 
+const EMAIL_LOGO_URL = Deno.env.get("EMAIL_LOGO_URL") || "https://ayo-transfer.pages.dev/logo-email.png";
+
 function emailTemplate(title: string, content: string, buttonText?: string, buttonUrl?: string): string {
   return `
 <!DOCTYPE html>
 <html lang="fr">
-<head><meta charset="UTF-8"><title>${title}</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${title}</title></head>
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0fdfa;">
   <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
     <div style="background:linear-gradient(135deg,#14b8a6 0%,#0891b2 100%);border-radius:16px 16px 0 0;padding:32px;text-align:center;">
-      <h1 style="color:white;margin:0;font-size:28px;font-weight:700;">AYO</h1>
-      <p style="color:rgba(255,255,255,0.8);margin:4px 0 0;font-size:14px;">Transfert d'argent</p>
+      <img src="${EMAIL_LOGO_URL}" alt="AYO Transfert d'argent" width="80" height="80" style="display:block;margin:0 auto 12px;border:0;outline:none;text-decoration:none;max-width:80px;height:auto;" />
+      <h1 style="color:white;margin:0;font-size:24px;font-weight:700;letter-spacing:1px;">AYO</h1>
+      <p style="color:rgba(255,255,255,0.85);margin:4px 0 0;font-size:13px;">Transfert d'argent</p>
     </div>
     <div style="background:white;border-radius:0 0 16px 16px;padding:32px;box-shadow:0 4px 6px rgba(0,0,0,0.05);">
       ${content}
       ${buttonText && buttonUrl ? `<div style="text-align:center;margin:32px 0;"><a href="${buttonUrl}" style="display:inline-block;background:#14b8a6;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;">${buttonText}</a></div>` : ""}
       <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0;">
-      <p style="color:#6b7280;font-size:12px;text-align:center;margin:0;">Cet email a été envoyé par AYO. Contact : contact@ayo-transfer.com</p>
+      <p style="color:#6b7280;font-size:12px;text-align:center;margin:0;">
+        Cet email a été envoyé par <strong>AYO</strong>.<br>
+        Contact : <a href="mailto:contact@ayo-transfer.com" style="color:#14b8a6;text-decoration:none;">contact@ayo-transfer.com</a>
+      </p>
     </div>
-    <p style="color:#9ca3af;font-size:11px;text-align:center;margin-top:24px;">© 2026 AYO Transfer</p>
+    <p style="color:#9ca3af;font-size:11px;text-align:center;margin-top:24px;">© 2026 AYO Transfer · Tous droits réservés</p>
   </div>
 </body>
 </html>
@@ -1940,6 +1946,194 @@ async function handleAdminListUsers(supabase: any) {
   return Response.json({ users: enriched }, { headers: corsHeaders });
 }
 
+// ═══════════════════════════════════════════════
+// RAPPELS VÉRIFICATION EMAIL
+// ═══════════════════════════════════════════════
+
+async function sendVerificationReminder(to: string, name: string | undefined, ageDays: number, reminderNumber: number, daysUntilBlock: number) {
+  const userName = name || to.split("@")[0];
+  const isFinalWarning = daysUntilBlock <= 14;
+  
+  // Générer un lien de confirmation valide
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+    type: "signup",
+    email: to,
+    password: "Temp-" + crypto.randomUUID() + "-!" + crypto.randomUUID().slice(0, 8),
+  });
+  
+  if (linkError || !linkData?.properties?.action_link) {
+    throw new Error(`Failed to generate link: ${linkError?.message || "unknown"}`);
+  }
+  
+  const confirmLink = linkData.properties.action_link;
+  const subject = isFinalWarning 
+    ? `⚠️ Dernier avertissement : votre compte sera suspendu dans ${daysUntilBlock} jours`
+    : `📧 Vérifiez votre email pour activer votre compte AYO`;
+  
+  const html = emailTemplate(
+    "Vérifiez votre email",
+    `<h2 style="color:#0f172a;font-size:22px;margin:0 0 8px;">Bonjour ${userName} 👋</h2>
+     <p style="color:#6b7280;font-size:15px;margin:0 0 16px;">Vous avez créé un compte AYO il y a ${ageDays} jours, mais votre email n'est toujours pas confirmé.</p>
+     ${isFinalWarning 
+       ? `<div style="background:#fef2f2;border-left:4px solid #ef4444;padding:16px;border-radius:8px;margin:20px 0;">
+            <p style="color:#991b1b;font-weight:600;margin:0;">⚠️ Sans confirmation, votre compte sera suspendu dans ${daysUntilBlock} jours.</p>
+          </div>`
+       : `<p style="color:#6b7280;font-size:15px;">Pour recevoir de l'argent et effectuer des transferts, vous devez confirmer votre adresse email.</p>`
+     }
+     <p style="color:#6b7280;font-size:14px;">Cliquez sur le bouton ci-dessous pour confirmer votre email maintenant.</p>
+     <p style="color:#9ca3af;font-size:12px;margin-top:24px;">Si vous n'êtes pas à l'origine de cette inscription, ignorez cet email.</p>`,
+    "Confirmer mon email",
+    confirmLink
+  );
+  
+  return sendEmail(to, subject, html);
+}
+
+async function sendVerificationBlockedEmail(to: string, name?: string) {
+  const userName = name || to.split("@")[0];
+  const html = emailTemplate(
+    "Compte suspendu",
+    `<h2 style="color:#0f172a;font-size:22px;margin:0 0 8px;">Bonjour ${userName},</h2>
+     <p style="color:#6b7280;font-size:15px;">Votre compte AYO a été suspendu car votre adresse email n'a jamais été confirmée après 3 mois et plusieurs rappels.</p>
+     <p style="color:#6b7280;font-size:15px;">Pour réactiver votre compte, contactez notre support en précisant votre email.</p>
+     <p style="color:#6b7280;font-size:15px;">Nous réactiverons votre compte sous 24h après confirmation de votre email.</p>`,
+    "Contacter le support",
+    "mailto:contact@ayo-transfer.com"
+  );
+  return sendEmail(to, "🚫 Votre compte AYO a été suspendu", html);
+}
+
+async function handleVerificationReminders(req: Request) {
+  // Vérifier le secret cron
+  const authHeader = req.headers.get("Authorization");
+  const expectedSecret = Deno.env.get("CRON_SECRET");
+  if (!expectedSecret || authHeader !== `Bearer ${expectedSecret}`) {
+    return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+  }
+  
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  
+  // Lister tous les utilisateurs (pagination)
+  let allUsers: any[] = [];
+  let page = 1;
+  const perPage = 1000;
+  while (true) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
+    if (error) return Response.json({ error: error.message }, { status: 500, headers: corsHeaders });
+    if (!data.users || data.users.length === 0) break;
+    allUsers = allUsers.concat(data.users);
+    if (data.users.length < perPage) break;
+    page++;
+    if (page > 50) break;
+  }
+  
+  const now = Date.now();
+  const stats = { total: allUsers.length, unverified: 0, reminded: 0, blocked: 0, skipped: 0, errors: [] as any[] };
+  
+  for (const user of allUsers) {
+    // Skip si email déjà confirmé
+    if (user.email_confirmed_at) continue;
+    if (!user.email) continue;
+    
+    stats.unverified++;
+    const createdAt = new Date(user.created_at).getTime();
+    const ageDays = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+    
+    // Skip si banni
+    if (user.banned_until && new Date(user.banned_until).getTime() > now) {
+      stats.skipped++;
+      continue;
+    }
+    
+    const reminderKey = `reminder:${user.id}`;
+    const reminderData = (await kv.get(reminderKey)) || { count: 0, lastSentAt: null, blockedAt: null };
+    
+    // Déjà bloqué
+    if (reminderData.blockedAt) {
+      stats.skipped++;
+      continue;
+    }
+    
+    // ═══ RÈGLE 1 : Bloquer après 90 jours ═══
+    if (ageDays >= 90) {
+      try {
+        await supabase.auth.admin.updateUserById(user.id, { ban_duration: "876000h" });
+        await sendVerificationBlockedEmail(user.email, user.user_metadata?.name);
+        await kv.set(reminderKey, { ...reminderData, blockedAt: new Date().toISOString() });
+        stats.blocked++;
+        console.log(`[REMINDER] Blocked user ${user.id} (${user.email}) after ${ageDays} days`);
+      } catch (e) {
+        stats.errors.push({ userId: user.id, step: "block", error: String(e) });
+      }
+      continue;
+    }
+    
+    // ═══ RÈGLE 2 : Rappel hebdomadaire (max 1 tous les 6 jours) ═══
+    const lastSent = reminderData.lastSentAt ? new Date(reminderData.lastSentAt).getTime() : 0;
+    const hoursSinceLast = (now - lastSent) / (1000 * 60 * 60);
+    
+    if (lastSent > 0 && hoursSinceLast < 144) { // 6 jours
+      stats.skipped++;
+      continue;
+    }
+    
+    // Skip si compte trop récent (< 7 jours) — laisse le temps de vérifier
+    if (ageDays < 7) {
+      stats.skipped++;
+      continue;
+    }
+    
+    const daysUntilBlock = 90 - ageDays;
+    const reminderCount = (reminderData.count || 0) + 1;
+    
+    try {
+      await sendVerificationReminder(user.email, user.user_metadata?.name, ageDays, reminderCount, daysUntilBlock);
+      await kv.set(reminderKey, { count: reminderCount, lastSentAt: new Date().toISOString(), blockedAt: null });
+      stats.reminded++;
+      console.log(`[REMINDER] Sent #${reminderCount} to ${user.id} (${user.email}), age ${ageDays}d, ${daysUntilBlock}d until block`);
+    } catch (e) {
+      stats.errors.push({ userId: user.id, step: "remind", error: String(e) });
+    }
+  }
+  
+  return Response.json({ success: true, stats }, { headers: corsHeaders });
+}
+
+async function handleResendVerification(req: Request, userId: string) {
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const { data: { user } } = await supabase.auth.admin.getUserById(userId);
+
+  if (!user || !user.email) {
+    return Response.json({ error: "User not found" }, { status: 404, headers: corsHeaders });
+  }
+  if (user.email_confirmed_at) {
+    return Response.json({ error: "already_confirmed", message: "Votre email est déjà confirmé." }, { status: 400, headers: corsHeaders });
+  }
+
+  // Rate limit : 3 demandes / heure
+  const check = await checkRateLimit(kv, `rate:resend-verif:${userId}`, {
+    maxAttempts: 3,
+    windowMs: 60 * 60 * 1000,
+    blockMs: 60 * 60 * 1000,
+  });
+  if (!check.allowed) {
+    const minutesLeft = Math.ceil((check.retryAfterMs || 0) / 60000);
+    return Response.json({ error: "rate_limited", message: `Trop de demandes. Réessayez dans ${minutesLeft} minutes.` }, { status: 429, headers: corsHeaders });
+  }
+
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: user.email,
+  });
+
+  if (error) {
+    return Response.json({ error: "send_failed", details: error.message }, { status: 500, headers: corsHeaders });
+  }
+
+  return Response.json({ success: true }, { headers: corsHeaders });
+}
+
 async function handleAdminResetPin(userId: string) {
   console.log(`[ADMIN-RESET-PIN] Starting for userId: ${userId}`);
 
@@ -2592,6 +2786,17 @@ async function creditPlatformRevenue(
   }
 }
 
+async function handleGetExchangeRates() {
+  const settings = (await kv.get("admin:settings")) || {};
+  const rates = settings.exchangeRates || {
+    XAF: 1,
+    XOF: 1,
+    EUR: 655.957,
+    USD: 610,
+  };
+  return Response.json({ rates }, { headers: corsHeaders });
+}
+
 async function handleGetDepositCoords() {
   const coords = (await kv.get("admin:deposit_coords")) || DEFAULT_DEPOSIT_COORDS;
   return Response.json({ coords: { ...DEFAULT_DEPOSIT_COORDS, ...coords } }, { headers: corsHeaders });
@@ -2761,6 +2966,16 @@ export default {
       }
     }
 
+
+    // ═══ CRON : Rappels de vérification ═══
+    if (method === "POST" && path.endsWith("/cron/verification-reminders")) {
+      return await handleVerificationReminders(req);
+    }
+
+    // ═══ TAUX DE CHANGE (public) ═══
+    if (method === "GET" && path.endsWith("/exchange-rates")) {
+      return await handleGetExchangeRates();
+    }
 
     // ═══ RATE LIMIT REGISTER (public) ═══
     if (method === "POST" && path.endsWith("/register/check-rate")) {
@@ -2984,6 +3199,7 @@ if (method === "GET" && path.endsWith("/admin/deposits/count")) {
         return await handleCancelExpiredDeposit(userId, id);
       }
       if (method === "GET" && path.endsWith("/profile")) return await handleGetProfile(userId);
+      if (method === "POST" && path.endsWith("/auth/resend-verification")) return await handleResendVerification(req, userId);
       if (method === "GET" && path.endsWith("/profile/pin")) return await handleGetPinStatus(userId);
       if (method === "POST" && path.endsWith("/profile/pin")) return await handleSetPin(req, userId);
       if (method === "POST" && path.endsWith("/profile")) return await handleUpdateProfile(req, userId);

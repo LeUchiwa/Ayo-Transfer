@@ -16,6 +16,8 @@ import {
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { useWallet } from "../contexts/WalletContext";
+import { useCurrency } from "../hooks/useCurrency";
+import { CurrencySelector } from "../components/CurrencySelector";
 import { walletApi } from "../../../utils/api";
 import { ServiceLogo } from "../components/ServiceLogo";
 import confetti from "canvas-confetti";
@@ -851,14 +853,15 @@ const handleResumeWithdrawal = () => {
             <div className="flex items-center gap-2">
               <WalletIcon className="w-5 h-5" />
               <CardDescription className="text-teal-50">Solde disponible</CardDescription>
+              <CurrencySelector className="ml-auto" />
             </div>
-            <CardTitle className="text-4xl">{balance.toLocaleString()} FCFA</CardTitle>
+            <CardTitle className="text-4xl">{format(balance)}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex gap-3">
               <div className="flex-1 bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm rounded-lg p-3">
                 <p className="text-xs text-teal-100">Reçu</p>
-                <p className="text-lg font-semibold">+{stats.totalReceived.toLocaleString()} FCFA</p>
+                <p className="text-lg font-semibold">+{format(stats.totalReceived)}</p>
               </div>
               <div className="flex-1 bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm rounded-lg p-3">
                 <p className="text-xs text-teal-100">Dépôts</p>

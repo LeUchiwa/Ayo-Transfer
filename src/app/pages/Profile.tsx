@@ -15,6 +15,9 @@ const API_BASE = `https://${projectId}.supabase.co/functions/v1/server`;
 
 export function Profile() {
   const [hasPin, setHasPin] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
+  const [resending, setResending] = useState(false);
+
   const [showPinModal, setShowPinModal] = useState(false);
 
   useEffect(() => {

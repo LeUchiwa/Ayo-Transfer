@@ -109,6 +109,13 @@ export const walletApi = {
   cancelExpiredDeposit: (id: string) =>
     apiCall(`/wallet/deposit/${id}/cancel-expired`, { method: 'POST' }),
   getServices: () => apiCall('/services'),
+  getExchangeRates: async (): Promise<{ rates: Record<string, number> }> => {
+    const res = await fetch(`${API_BASE}/exchange-rates`);
+    return res.json();
+  },
+
+  resendVerification: () => apiCall('/auth/resend-verification', { method: 'POST' }),
+
   // ═══ ENVOI EXTERNE ═══
   createExternalTransfer: (data: {
     amountFCFA: number;
