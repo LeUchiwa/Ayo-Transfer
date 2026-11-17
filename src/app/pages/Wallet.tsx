@@ -213,6 +213,7 @@ function TransitPage({ type, method, amount, phone, ref_, balance, onConfirmed, 
   const newBalance = isDeposit ? balance + amount : balance - total;
 
   const { getTransactionStatus } = useWallet();
+  const { format } = useCurrency();
   const coord = isDeposit ? DEPOSIT_COORDS[method.accountType] : WITHDRAW_COORDS[method.accountType];
   
   const [progress, setProgress] = useProgressAnimation(true);
