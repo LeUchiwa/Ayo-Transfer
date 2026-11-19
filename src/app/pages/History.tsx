@@ -7,6 +7,7 @@ import { Badge } from "../components/ui/badge";
 import { ArrowUpRight, ArrowDownRight, Search, Loader2, Inbox, AlertCircle, RefreshCw } from "lucide-react";
 import { motion } from "motion/react";
 import { walletApi } from "../../../utils/api";
+import { useCurrency } from "../contexts/CurrencyContext";
 import { useAuth } from "../contexts/AuthContext";
 import { SkeletonTransactionList } from "../components/ui/SkeletonCard";
 
@@ -82,6 +83,7 @@ const PAGE_SIZE = 20;
 
 export function History() {
   const { user } = useAuth();
+  const { format } = useCurrency();
   const [transactions, setTransactions] = useState<DisplayTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -295,7 +297,7 @@ export function History() {
                       <div className="flex items-center justify-between md:justify-end gap-4 md:gap-6">
                         <div className="text-right">
                           <p className={`font-semibold ${t.direction === "sent" ? "text-red-600" : "text-green-600"}`}>
-                            {t.direction === "sent" ? "-" : "+"}{(t.amount || 0).toLocaleString()} FCFA
+                            {t.direction === "sent" ? "-" : "+"}{format(t.amount || 0)}
                           </p>
                           <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(t.date)}</p>
                         </div>

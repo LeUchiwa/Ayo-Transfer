@@ -11,6 +11,7 @@ import {
 import { toast } from "sonner";
 import { walletApi } from "../../../utils/api";
 import { useAuth } from "../contexts/AuthContext";
+import { useCurrency } from "../contexts/CurrencyContext";
 import { notifyNotificationsChanged } from "../hooks/useUnreadNotificationsCount";
 import { useOneSignal } from "../hooks/useOneSignal";
 import { BellOff } from "lucide-react";
@@ -79,6 +80,7 @@ function timeAgo(iso: string): string {
 export function Notifications() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { format } = useCurrency();
   const userId = user?.id || "";
 
   const [notifications, setNotifications] = useState<ApiNotification[]>([]);
