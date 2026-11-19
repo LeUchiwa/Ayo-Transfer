@@ -105,7 +105,6 @@ export function ProtectedLayout() {
 
                 {/* ✅ Avatar amélioré */}
                 <CurrencySelector variant="dark" />
-                <CurrencySelector variant="dark" />
                 <ThemeToggle />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
