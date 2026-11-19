@@ -30,7 +30,6 @@ import ayoLogo from "@/imports/AYO.png";
 import { useUnreadNotificationsCount } from "../hooks/useUnreadNotificationsCount";
 import { usePendingTransactionsCount } from "../hooks/usePendingTransactionsCount";
 import { ThemeToggle } from "./ThemeToggle";
-import { CurrencySelector } from "./CurrencySelector";
 import { PWAInstallMenuItem } from "./PWAInstallMenuItem";
 
 export function ProtectedLayout() {
@@ -104,8 +103,7 @@ export function ProtectedLayout() {
                 ))}
 
                 {/* ✅ Avatar amélioré */}
-                <CurrencySelector variant="dark" />
-                <ThemeToggle />
+<ThemeToggle />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="rounded-full gap-2 px-3">
